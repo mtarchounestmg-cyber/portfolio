@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>Insight — Rapports</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+    <div class="mobnav"><a href="index.html">🏠 Accueil</a><a class="active" href="rapports.html">📈 Rapports</a><a
+            href="import.html">📤 Import</a><a href="../etude-insight.html">📄 Étude</a></div>
+    <aside class="side">
+        <div class="logo">📊 In<span>sight</span></div><small class="tag">Dashboard analytics · démo</small>
+        <a class="nav" href="index.html">🏠 Vue d'ensemble</a><a class="nav active" href="rapports.html">📈
+            Rapports</a><a class="nav" href="import.html">📤 Import CSV</a>
+        <div class="tip">💡 Les rapports utilisent le <b style="color:#fff">dataset actif</b> (dernier import).
+            Changez-le sur la page <a href="import.html" style="color:#4ADE80">Import</a>.</div>
+        <div class="back"><a href="../etude-insight.html">📄 Étude de cas</a><a href="../index.html">← Portfolio</a>
+        </div>
+    </aside>
+    <main class="main">
+        <div class="top">
+            <div>
+                <h1>Rapports</h1><small id="periode">—</small>
+            </div>
+            <div><button class="btn btn-ghost" onclick="exportCSV()">📥 Export CSV</button> <button class="btn"
+                    onclick="window.print()">🖨️ Imprimer</button></div>
+        </div>
+        <div class="filters"><select id="f-per" onchange="render()">
+                <option value="all">Toutes les périodes</option>
+                <option value="3">3 dernières</option>
+                <option value="5">5 dernières</option>
+            </select>
+            <select id="f-tri" onchange="render()">
+                <option value="chrono">Tri chronologique</option>
+                <option value="desc">Tri CA décroissant</option>
+            </select>
+        </div>
+        <div class="kpis">
+            <div class="kpi"><small>CA cumulé</small><b id="r-ca">—</b><span class="up" id="r-evol">—</span></div>
+            <div class="kpi"><small>Panier moyen</small><b>85 €</b><span
+                    style="color:#8A93A3;font-size:12px">stable</span></div>
+            <div class="kpi"><small>Meilleure période</small><b id="r-best" style="font-size:20px">—</b><span class="up"
+                    id="r-bestv">—</span></div>
+            <div class="kpi"><small>Croissance visiteurs</small><b id="r-vis">—</b><span class="up">tendance
+                    haussière</span></div>
+        </div>
+        <div class="grid2">
+            <div class="card">
+                <h3>Comparatif CA vs visiteurs (indice 100)</h3><canvas id="rc1" height="150"></canvas>
+            </div>
+            <div class="card">
+                <h3>Répartition du CA</h3><canvas id="rc2" height="150"></canvas>
+            </div>
+        </div>
+        <div class="card">
+            <h3>Détail par période</h3>
+            <div style="overflow:auto">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Période</th>
+                            <th>CA</th>
+                            <th>Visiteurs</th>
+                            <th>Commandes*</th>
+                            <th>Conversion*</th>
+                            <th>Part du CA</th>
+                        </tr>
+                    </thead>
+                    <tbody id="rtbody"></tbody>
+                </table>
+            </div><small style="color:#6B7280">* Estimations : commandes ≈ CA / 85 €.</small>
+        </div>
+    </main>
+    <script>
+        const store = { m: {}, getItem(k) { try { return localStorage.getItem(k) } catch (e) { return (k in this.m) ? this.m[k] : null } }, setItem(k, v) { try { localStorage.setItem(k, v) } catch (e) { this.m[k] = String(v) } }, removeItem(k) { try { localStorage.removeItem(k) } catch (e) { delete this.m[k] } } };
+        let charts = [];
+        function getData() { try { const d = JSON.parse(store.getItem('insight_data')); if (d && d.labels && d.labels.length) return d } catch (e) { } return { labels: ['Jan', 'Fév', 'Mar', 'Avr', 'Mai'], ventes: [4200, 5800, 5100, 7800, 9200], visiteurs: [8200, 10500, 9800, 14200, 16800] } }
+        function slice() {
+            const d = getData(); let idx = d.labels.map((_, i) => i); const p = document.getElementById('f-per').value;
+            if (p !== 'all') idx = idx.slice(-parseInt(p)); if (document.getElementById('f-tri').value === 'desc') idx = [...idx].sort((a, b) => d.ventes[b] - d.ventes[a]);
+            return { labels: idx.map(i => d.labels[i]), ventes: idx.map(i => d.ventes[i]), visiteurs: idx.map(i => d.visiteurs[i]) }
+        }
+        function render() {
+            const { labels, ventes, visiteurs } = slice(); const ca = ventes.reduce((a, b) => a + b, 0), vis = visiteurs.reduce((a, b) => a + b, 0);
+            document.getElementById('periode').textContent = labels.length + ' périodes · ' + labels[0] + ' → ' + labels[labels.length - 1];
+            document.getElementById('r-ca').textContent = ca.toLocaleString('fr-FR') + ' €';
+            const evo = ventes.length > 1 ? ((ventes[ventes.length - 1] - ventes[0]) / Math.max(ventes[0], 1) * 100) : 0;
+            document.getElementById('r-evol').textContent = (evo >= 0 ? '▲ +' : '▼ ') + evo.toFixed(1) + '% sur la période';
+            let bi = ventes.indexOf(Math.max(...ventes)); document.getElementById('r-best').textContent = labels[bi]; document.getElementById('r-bestv').textContent = ventes[bi].toLocaleString('fr-FR') + ' €';
+            document.getElementById('r-vis').textContent = '+' + (visiteurs.length > 1 ? (((visiteurs[visiteurs.length - 1] - visiteurs[0]) / Math.max(visiteurs[0], 1)) * 100).toFixed(1) : '0') + '%';
+            charts.forEach(c => c.destroy()); charts = []; if (window.Chart) {
+                Chart.defaults.color = '#8A93A3'; Chart.defaults.borderColor = '#1F2937';
+                const i100 = a => { const m = Math.max(...a, 1); return a.map(v => v / m * 100) };
+                charts.push(new Chart(document.getElementById('rc1'), { type: 'line', data: { labels, datasets: [{ label: 'CA (indice)', data: i100(ventes), borderColor: '#4ADE80', tension: .35 }, { label: 'Visiteurs (indice)', data: i100(visiteurs), borderColor: '#60A5FA', tension: .35 }] }, options: { plugins: { legend: { position: 'bottom', labels: { boxWidth: 12 } } }, scales: { y: { max: 110 } } } }));
+                charts.push(new Chart(document.getElementById('rc2'), { type: 'pie', data: { labels, datasets: [{ data: ventes, backgroundColor: ['#4ADE80', '#60A5FA', '#E5B567', '#8B5CF6', '#F87171', '#2DD4BF', '#FBBF24', '#A3E635'], borderWidth: 0 }] }, options: { plugins: { legend: { position: 'bottom', labels: { boxWidth: 12 } } } } }));
+            } else { document.querySelectorAll('canvas').forEach(c => { const p = document.createElement('p'); p.style.cssText = 'color:#6B7280;font-size:13px;padding:20px;text-align:center'; p.textContent = 'Graphiques indisponibles hors-ligne (CDN bloque). Le tableau detaille reste a jour.'; c.replaceWith(p) }); }
+            document.getElementById('rtbody').innerHTML = labels.map((l, i) => { const cmd = Math.round(ventes[i] / 85), conv = visiteurs[i] ? (cmd / visiteurs[i] * 100).toFixed(1) : '0'; return `<tr><td><b>${l}</b></td><td>${ventes[i].toLocaleString('fr-FR')} €</td><td>${visiteurs[i].toLocaleString('fr-FR')}</td><td>${cmd}</td><td>${conv}%</td><td><div class="bar-track"><div class="bar-fill" style="width:${ventes[i] / Math.max(...ventes) * 100}%"></div></div></td></tr>` }).join('')
+        }
+        function exportCSV() { const d = getData(); let csv = 'date,ventes,visiteurs\n' + d.labels.map((l, i) => `${l},${d.ventes[i]},${d.visiteurs[i]}`).join('\n'); const a = document.createElement('a'); a.href = URL.createObjectURL(new Blob([csv], { type: 'text/csv' })); a.download = 'insight-export.csv'; a.click() }
+        render();
+    </script>
+</body>
+
+</html>

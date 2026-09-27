@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="fr" data-theme="dark">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Étude de cas — Le Saveur · Tarchoune Mohamed</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link
+    href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=IBM+Plex+Mono:wght@400;500;600&family=Inter:wght@400;500;600&display=swap"
+    rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+  <div class="cursor-dot"></div>
+  <div class="cursor-ring"></div><canvas id="bg-canvas"></canvas>
+  <div id="scroll-progress"></div>
+  <nav class="editor-tabs">
+    <div class="wrap"><span class="tab-brand">~/portfolio</span>
+      <a href="index.html#hero" class="tab">profil.php</a><a href="index.html#projects"
+        class="tab active">le-saveur.md</a><a href="index.html#contact" class="tab">contact.php</a>
+      <button id="theme-toggle" class="theme-toggle" aria-label="Changer de thème" type="button">☀</button>
+    </div>
+  </nav>
+  <div class="wrap">
+    <div class="breadcrumb reveal"><a href="index.html">←
+        Portfolio</a><span>/</span><span>projets.log</span><span>/</span><strong>le-saveur.md</strong></div>
+    <header class="etude-hero reveal">
+      <div class="commit-hash">#c04e88f<span class="date">30 Mai 2025</span></div>
+      <h1>Le Saveur — Site vitrine restaurant</h1>
+      <p class="lede">Site vitrine responsive pour un restaurant gastronomique : carte filtrable, réservation en ligne
+        avec disponibilités, galerie, avis clients et back-office. Pensé mobile-first, optimisé SEO et branché sur
+        MySQL.</p>
+      <div class="etude-meta"><span class="chip chip--hash">#c04e88f</span><span class="chip chip--accent">HTML /
+          CSS</span><span class="chip">PHP 8</span><span class="chip">MySQL 8</span><span class="chip">JS
+          vanilla</span><span class="chip">~2 semaines</span></div>
+      <div class="cta-row"><a class="btn-primary" href="demo-saveur/index.html">Voir la démo live →</a><a
+          class="btn-secondary" href="https://github.com/ton-pseudo/le-saveur" target="_blank" rel="noopener">Code
+          source ↗</a><a class="btn-secondary" href="index.html#projects">← Tous les projets</a></div>
+      <div class="etude-toc"><a href="#presentation">01 · Présentation</a><a href="#technique">02 · Approche
+          technique</a><a href="#logique">03 · Logique dev</a><a href="#architecture">04 · Architecture</a><a
+          href="#demo">05 · Démo</a></div>
+    </header>
+    <section class="etude-section reveal" id="presentation">
+      <div class="section-head"><span class="path">~/01-presentation.md</span>
+        <h2>Présentation générale</h2>
+      </div>
+      <p><strong>Contexte.</strong> Un restaurant parisien perd des couverts : pas de réservation en ligne, carte PDF
+        illisible sur mobile, zéro présence Google. Objectif : <strong>un site qui donne faim et convertit en
+          réservations</strong>.</p>
+      <p><strong>Objectifs.</strong> Design appétissant mobile-first · carte administrable · réservation avec créneaux
+        réels · confirmation email/SMS · SEO local (schema.org Restaurant).</p>
+      <div class="feature-grid">
+        <div class="feature-card"><b>🏠 Accueil immersif</b><span>Hero plein écran, spécialités du chef, avis Google,
+            horaires.</span></div>
+        <div class="feature-card"><b>🍽️ Carte filtrable</b><span>Entrées / plats / desserts, filtres régime (veggie),
+            prix, allergènes.</span></div>
+        <div class="feature-card"><b>📅 Réservation live</b><span>Date + heure + couverts, contrôle capacitaire,
+            confirmation immédiate.</span></div>
+        <div class="feature-card"><b>✉️ Notifications</b><span>Email de confirmation + rappel J-1 via PHPMailer et
+            CRON.</span></div>
+        <div class="feature-card"><b>⭐ Avis clients</b><span>Modération back-office, note moyenne en données
+            structurées.</span></div>
+        <div class="feature-card"><b>🔍 SEO local</b><span>Balises sémantiques, JSON-LD Restaurant, sitemap, Core Web
+            Vitals.</span></div>
+      </div>
+    </section>
+    <section class="etude-section reveal" id="technique">
+      <div class="section-head"><span class="path">~/02-technique.md</span>
+        <h2>Approche technique</h2>
+      </div>
+      <p>Parti pris : <strong>PHP templating côté serveur</strong> (pas de SPA) pour un SEO maximal et un hébergement
+        mutualisé à 5 €/mois. Le CSS est <strong>100 % maison</strong> (variables, grid, clamp) sans framework pour un
+        contrôle pixel-perfect et un bundle &lt; 40 Ko.</p>
+      <table class="spec">
+        <tr>
+          <th>Choix</th>
+          <th>Technologie</th>
+          <th>Pourquoi</th>
+        </tr>
+        <tr>
+          <td><strong>Rendu</strong></td>
+          <td>PHP inclus + templates</td>
+          <td>HTML servi direct = SEO parfait, pas de JS requis.</td>
+        </tr>
+        <tr>
+          <td><strong>Style</strong></td>
+          <td>CSS custom, mobile-first</td>
+          <td>Léger, rapide (Lighthouse 95+), identité unique.</td>
+        </tr>
+        <tr>
+          <td><strong>Interactions</strong></td>
+          <td>JS vanilla (filtres, date-picker)</td>
+          <td>Amélioration progressive, fonctionne sans JS.</td>
+        </tr>
+        <tr>
+          <td><strong>Données</strong></td>
+          <td>MySQL : dishes, slots, bookings</td>
+          <td>Carte et réservations administrables.</td>
+        </tr>
+        <tr>
+          <td><strong>Réservation</strong></td>
+          <td>Transaction + verrou capacitaire</td>
+          <td>Jamais de surréservation : <code>SELECT … FOR UPDATE</code>.</td>
+        </tr>
+        <tr>
+          <td><strong>SEO</strong></td>
+          <td>JSON-LD + Open Graph</td>
+          <td>Étoiles Google, partage réseaux soigné.</td>
+        </tr>
+      </table>
+    </section>
+    <section class="etude-section reveal" id="logique">
+      <div class="section-head"><span class="path">~/03-logique.md</span>
+        <h2>Logique de développement</h2>
+      </div>
+      <ol class="steps">
+        <li><strong>Maquette mobile-first.</strong> Le menu et le bouton « Réserver » accessibles en &lt; 2 taps.
+          Palette crème/bordeaux/or, typographie serif pour les titres.</li>
+        <li><strong>Carte en BDD.</strong> Table <code>dishes</code> (catégorie, prix, veggie, spicy, dispo du jour). Le
+          chef active/désactive un plat depuis l'admin, le site suit.</li>
+        <li><strong>Moteur de réservation.</strong> Table <code>slots</code> (date, heure, capacité restante). À chaque
+          réservation : transaction, décrémente, INSERT booking + token d'annulation unique.</li>
+        <li><strong>Anti-surréservation.</strong> <code>SELECT remaining FROM slots WHERE … FOR UPDATE</code> : deux
+          clients simultanés ne peuvent pas prendre la dernière table.</li>
+        <li><strong>Emails + SEO.</strong> Confirmation immédiate avec récap + lien d'annulation ; rappel J-1 par CRON ;
+          JSON-LD <code>Restaurant</code> avec horaires et geo.</li>
+      </ol>
+      <h3>Extrait — réservation atomique (PHP/PDO)</h3>
+      <div class="codeblock">
+        <div class="codeblock__bar"><span class="dot dot--r"></span><span class="dot dot--y"></span><span
+            class="dot dot--g"></span><span>src/Booking.php</span></div>
+        <pre>$pdo-&gt;<span class="tk-k">beginTransaction</span>();
+$slot = $pdo-&gt;<span class="tk-k">query</span>(<span class="tk-s">"SELECT remaining FROM slots
+  WHERE day='2025-06-14' AND hour='20:00' FOR UPDATE"</span>)-&gt;<span class="tk-k">fetch</span>();
+<span class="tk-f">if</span> ($slot[<span class="tk-s">'remaining'</span>] &lt; $couverts) { <span class="tk-f">throw new</span> <span class="tk-k">CompletException</span>(); }
+$pdo-&gt;<span class="tk-k">prepare</span>(<span class="tk-s">"UPDATE slots SET remaining = remaining - ?
+  WHERE day=? AND hour=?"</span>)-&gt;<span class="tk-k">execute</span>([$couverts,$day,$hour]);
+$token = <span class="tk-k">bin2hex</span>(<span class="tk-k">random_bytes</span>(16)); <span class="tk-c">// lien d'annulation</span>
+$pdo-&gt;<span class="tk-k">commit</span>();</pre>
+      </div>
+    </section>
+    <section class="etude-section reveal" id="architecture">
+      <div class="section-head"><span class="path">~/04-architecture.md</span>
+        <h2>Architecture du site</h2>
+      </div>
+      <div class="archi">
+        <div class="archi-box"><b>PAGES PHP</b><span>accueil · carte<br>réservation · contact<br>SEO serveur</span>
+        </div>
+        <div class="archi-arrow">⇄</div>
+        <div class="archi-box"><b>MODULES</b><span>Booking · Menu<br>Mailer · Admin<br>Validation + CSRF</span></div>
+        <div class="archi-arrow">⇄</div>
+        <div class="archi-box"><b>MYSQL</b><span>dishes · slots<br>bookings · reviews<br>users (admin)</span></div>
+      </div>
+      <h3>Structure des dossiers</h3>
+      <div class="codeblock">
+        <div class="codeblock__bar"><span>arborescence</span></div>
+        <pre>le-saveur/
+├── index.php, carte.php, reservation.php, contact.php
+├── partials/        <span class="tk-c"># header, footer, nav</span>
+├── admin/           <span class="tk-c"># plats, créneaux, avis (protégé)</span>
+├── assets/css/      <span class="tk-c"># style.css (~35 Ko, 0 framework)</span>
+└── src/Booking.php  <span class="tk-c"># logique capacitaire + mails</span></pre>
+      </div>
+    </section>
+    <section class="etude-section reveal" id="demo">
+      <div class="section-head"><span class="path">~/05-demo.md</span>
+        <h2>Démonstration</h2>
+      </div>
+      <div class="demo-banner">
+        <div>
+          <h3>🚀 Visitez le restaurant</h3>
+          <p>Démo 4 pages : accueil, carte filtrable, réservation fonctionnelle (disponibilités simulées) et contact.
+          </p>
+          <div class="demo-pages"><span>01 · Accueil</span><span>02 · Carte</span><span>03 · Réservation</span><span>04
+              · Contact</span></div>
+        </div>
+        <div><a class="btn-primary" href="demo-saveur/index.html">Découvrir la démo →</a></div>
+      </div>
+      <h3>Évolutions prévues</h3>
+      <p>Click &amp; Collect + paiement Stripe · menu QR-code pour tables · programme fidélité · disponibilités temps
+        réel (WebSocket) · multilingue FR/EN.</p>
+    </section>
+    <div class="etude-nav"><a href="etude-biblioapi.html"><small>← Projet précédent</small><b>BiblioAPI</b></a><a
+        href="etude-insight.html"><small>Projet suivant →</small><b>Insight — Dashboard</b></a></div>
+  </div>
+  <footer class="wrap"><span>© 2026 Tarchoune Mohamed — Étude de cas Le Saveur</span><span><a
+        href="index.html">Portfolio</a> · <a href="https://github.com/ton-pseudo" target="_blank">GitHub</a></span>
+  </footer>
+  <script>
+    const store = { m: {}, getItem(k) { try { return localStorage.getItem(k) } catch (e) { return (k in this.m) ? this.m[k] : null } }, setItem(k, v) { try { localStorage.setItem(k, v) } catch (e) { this.m[k] = String(v) } }, removeItem(k) { try { localStorage.removeItem(k) } catch (e) { delete this.m[k] } } }; const rt = document.documentElement; const sv = store.getItem('portfolio-theme'); if (sv) rt.setAttribute('data-theme', sv); const b = document.getElementById('theme-toggle'); function sync() { b.textContent = rt.getAttribute('data-theme') === 'dark' ? '☀' : '☾'; } sync(); b.addEventListener('click', () => { rt.setAttribute('data-theme', rt.getAttribute('data-theme') === 'dark' ? 'light' : 'dark'); store.setItem('portfolio-theme', rt.getAttribute('data-theme')); sync(); });
+    const bar = document.getElementById('scroll-progress'); addEventListener('scroll', () => { const h = document.documentElement; bar.style.width = (h.scrollTop / (h.scrollHeight - h.clientHeight) * 100) + '%'; }, { passive: true });
+    const ro = new IntersectionObserver(es => es.forEach(x => { if (x.isIntersecting) { x.target.classList.add('is-visible'); ro.unobserve(x.target); } }), { threshold: .12 }); document.querySelectorAll('.reveal').forEach(el => ro.observe(el));
+    (function () { const c = document.getElementById('bg-canvas'); if (!c || matchMedia('(prefers-reduced-motion: reduce)').matches) return; const x = c.getContext('2d'); let w, h, d = []; const g = 42; let mx = -9999, my = -9999; function rs() { w = c.width = innerWidth; h = c.height = innerHeight; d = []; for (let i = g / 2; i < w; i += g)for (let j = g / 2; j < h; j += g)d.push({ ox: i, oy: j }); } rs(); addEventListener('resize', rs); addEventListener('mousemove', e => { mx = e.clientX; my = e.clientY; }); (function dr() { x.clearRect(0, 0, w, h); const col = getComputedStyle(rt).getPropertyValue('--accent').trim() || '#5FCE8F'; for (const p of d) { const dx = mx - p.ox, dy = my - p.oy, ds = Math.sqrt(dx * dx + dy * dy); let px = p.ox, py = p.oy, a = .1, s = 1.3; if (ds < 140) { const f = 1 - ds / 140; px = p.ox - dx * f * .25; py = p.oy - dy * f * .25; a = .1 + f * .55; s = 1.3 + f * 1.8; } x.beginPath(); x.arc(px, py, s, 0, 7); x.fillStyle = col; x.globalAlpha = a; x.fill(); } x.globalAlpha = 1; requestAnimationFrame(dr); })(); })();
+    if (!matchMedia('(hover: none)').matches) { const dot = document.querySelector('.cursor-dot'), ring = document.querySelector('.cursor-ring'); let mx = 0, my = 0, rx = 0, ry = 0; addEventListener('mousemove', e => { mx = e.clientX; my = e.clientY; dot.style.left = mx + 'px'; dot.style.top = my + 'px'; }); (function l() { rx += (mx - rx) * .18; ry += (my - ry) * .18; ring.style.left = rx + 'px'; ring.style.top = ry + 'px'; requestAnimationFrame(l); })(); }</script>
+</body>
+
+</html>

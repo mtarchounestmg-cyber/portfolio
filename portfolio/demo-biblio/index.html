@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>BiblioAPI — API REST Bibliothèque</title>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap"
+    rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+  <nav class="demo-topbar"><span class="logo">📚 BiblioAPI</span>
+    <a class="tf-link active" href="index.html">Accueil</a><a class="tf-link"
+      href="documentation.html">Documentation</a><a class="tf-link" href="playground.html">Playground</a>
+    <span class="spacer"></span><a class="back" href="../etude-biblioapi.html">📄 Étude de cas</a><a class="back"
+      href="../index.html">← Portfolio</a>
+  </nav>
+  <header class="hero">
+    <div class="badge">https://api.biblio.fr/v1 · <span style="color:#5FCE8F">● Operational</span></div>
+    <h1>L'API bibliothèque<br><span>simple & sécurisée.</span></h1>
+    <p>Catalogue, emprunts, utilisateurs. Authentification JWT, réponses JSON normalisées, documentation exécutable.
+      Intégrez en 10 minutes.</p>
+    <div class="btn-row"><a class="btn" href="playground.html">Tester en live →</a><a class="btn btn-ghost"
+        href="documentation.html">Lire la doc</a></div>
+    <div class="status-row" style="justify-content:center">
+      <div class="status"><small style="color:#8A93A3">Uptime 30j</small><b class="ok-t">99.98 %</b></div>
+      <div class="status"><small style="color:#8A93A3">Latence médiane</small><b>42 ms</b></div>
+      <div class="status"><small style="color:#8A93A3">Endpoints</small><b>12</b></div>
+      <div class="status"><small style="color:#8A93A3">Version</small><b>v1.0</b></div>
+    </div>
+  </header>
+  <div class="wrap">
+    <h2>Endpoints principaux</h2>
+    <p class="sub">Une URL prévisible par ressource. Le détail complet est dans la documentation.</p>
+    <div class="ep-grid">
+      <div class="ep-card"><span class="m post">POST</span>/login<p>Échange email + mot de passe contre un JWT valide 1
+          h.</p>
+      </div>
+      <div class="ep-card"><span class="m get">GET</span>/books?q=&amp;page=<p>Liste paginée du catalogue, recherche
+          plein texte.</p>
+      </div>
+      <div class="ep-card"><span class="m post">POST</span>/books<p>Ajout d'un livre (admin). Validation stricte, 201
+          Created.</p>
+      </div>
+      <div class="ep-card"><span class="m post">POST</span>/loans<p>Emprunter : transaction atomique, 409 si
+          indisponible.</p>
+      </div>
+      <div class="ep-card"><span class="m del">DELETE</span>/loans/{id}<p>Retour de livre, stock remis à disponible.</p>
+      </div>
+      <div class="ep-card"><span class="m get">GET</span>/me/loans<p>Historique des emprunts de l'utilisateur connecté.
+        </p>
+      </div>
+    </div>
+    <h2 style="margin-top:48px">Démarrage en 3 étapes</h2>
+    <p class="sub">De zéro à votre premier appel authentifié.</p>
+    <div class="quick">
+      <div class="q"><b>1 · LOGIN</b>
+        <p>POST /login avec <span class="mono">admin@biblio.fr / admin123</span> → recevez un token JWT.</p>
+      </div>
+      <div class="q"><b>2 · AUTHORIZE</b>
+        <p>Ajoutez <span class="mono">Authorization: Bearer &lt;token&gt;</span> à chaque requête.</p>
+      </div>
+      <div class="q"><b>3 · CALL</b>
+        <p>GET /books, POST /loans… réponses JSON + bons codes HTTP.</p>
+      </div>
+    </div>
+    <pre class="code">curl -X POST https://api.biblio.fr/v1/login \
+  -H "Content-Type: application/json" \
+  -d '{"email":"admin@biblio.fr","password":"admin123"}'
+
+# → { "token": "eyJhbGciOiJIUzI1NiJ9…" }
+
+curl https://api.biblio.fr/v1/books \
+  -H "Authorization: Bearer VOTRE_TOKEN"</pre>
+    <div class="cta">
+      <h2>Prêt à tester sans Postman ?</h2>
+      <p>Le playground exécute de vrais scénarios : login, liste, ajout, emprunt.</p><a class="btn"
+        href="playground.html">Ouvrir le playground →</a>
+    </div>
+  </div>
+  <footer class="site">BiblioAPI — démo fictive par <a href="../index.html">Tarchoune Mohamed</a> · <a
+      href="../etude-biblioapi.html">Lire l'étude de cas</a></footer>
+</body>
+
+</html>

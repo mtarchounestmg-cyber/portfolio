@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>Réserver — Le Saveur</title>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Playfair+Display:wght@600;700&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+    <div class="demo-mini"><span>💡 Site de démonstration fictif</span><a href="../etude-saveur.html">📄 Étude de
+            cas</a><a href="../index.html">← Portfolio</a></div>
+    <nav class="nav">
+        <div class="nav-in"><a class="brand" href="index.html">Le Saveur<small>PARIS · DEPUIS 1998</small></a>
+            <div class="nav-links"><a href="index.html">Accueil</a><a href="menu.html">La Carte</a><a class="active"
+                    href="reservations.html">Réserver</a><a href="contact.html">Contact</a></div>
+        </div>
+    </nav>
+    <div class="wrap">
+        <h2>📅 Réserver une table</h2>
+        <p class="sub">Confirmation immédiate · Annulation gratuite jusqu'à 3 h avant.</p>
+        <div class="resa-grid">
+            <div class="form-card">
+                <label>1 · Date</label><input type="date" id="r-date" onchange="renderSlots()">
+                <div class="row2">
+                    <div><label>2 · Service</label><select id="r-service" onchange="renderSlots()">
+                            <option value="midi">Midi (12h-14h)</option>
+                            <option value="soir">Soir (19h-22h30)</option>
+                        </select></div>
+                    <div><label>3 · Couverts</label><select id="r-couv">
+                            <option>1</option>
+                            <option selected>2</option>
+                            <option>3</option>
+                            <option>4</option>
+                            <option>5</option>
+                            <option>6</option>
+                            <option>7</option>
+                            <option>8</option>
+                        </select></div>
+                </div>
+                <label>4 · Horaire <small style="font-weight:400">(créneaux barrés = complets)</small></label>
+                <div class="slots" id="slots"></div>
+                <div class="row2">
+                    <div><label>5 · Nom *</label><input id="r-nom" placeholder="Marie Dupont"></div>
+                    <div><label>Téléphone *</label><input id="r-tel" placeholder="06 12 34 56 78"></div>
+                </div>
+                <label>Demande spéciale (optionnel)</label><input id="r-note"
+                    placeholder="Table en terrasse, chaise bébé…">
+                <button class="btn" style="width:100%;margin-top:18px" onclick="book()">Confirmer la réservation
+                    →</button>
+                <div class="success" id="ok">✅ <b>Réservation confirmée !</b><br><span id="ok-txt"></span><br><small>Un
+                        email de confirmation vient de vous être envoyé (simulé).</small></div>
+            </div>
+            <div class="myresa">
+                <h3>🧾 Mes réservations</h3>
+                <p style="font-size:13px;color:#a89480">Stockées dans ce navigateur (démo). En production : base MySQL +
+                    email.</p>
+                <div id="mine"></div>
+                <hr style="border:none;border-top:1px solid #4a3d33;margin:18px 0">
+                <h3>ℹ️ Bon à savoir</h3>
+                <p style="font-size:13.5px;color:#cbb9a8">• Groupes 9+ : appelez le 01 43 55 12 12<br>• Retard &gt; 15
+                    min : table réattribuée<br>• Allergies ? Prévenez-nous à la réservation<br>• Annulation gratuite
+                    jusqu'à 3 h avant</p>
+            </div>
+        </div>
+    </div>
+    <footer class="site">© 2026 Le Saveur — site de démonstration fictif par <a href="../index.html">Tarchoune
+            Mohamed</a> · <a href="../etude-saveur.html">Étude de cas</a></footer>
+    <div id="toast"></div>
+    <script>
+        const store = { m: {}, getItem(k) { try { return localStorage.getItem(k) } catch (e) { return (k in this.m) ? this.m[k] : null } }, setItem(k, v) { try { localStorage.setItem(k, v) } catch (e) { this.m[k] = String(v) } }, removeItem(k) { try { localStorage.removeItem(k) } catch (e) { delete this.m[k] } } };
+        const SLOTS = { midi: ["12:00", "12:30", "13:00", "13:30", "14:00"], soir: ["19:00", "19:30", "20:00", "20:30", "21:00", "21:30", "22:00"] };
+        let sel = null;
+        document.getElementById('r-date').value = new Date().toISOString().slice(0, 10);
+        function toast(m) { const t = document.getElementById('toast'); t.textContent = m; t.style.display = 'block'; setTimeout(() => t.style.display = 'none', 2600) }
+        function seed() { const d = document.getElementById('r-date').value, s = document.getElementById('r-service').value; let h = 0; const k = d + s; for (let i = 0; i < k.length; i++)h = (h * 31 + k.charCodeAt(i)) % 997; return h }
+        function renderSlots() {
+            sel = null; const s = document.getElementById('r-service').value, h = seed();
+            document.getElementById('slots').innerHTML = SLOTS[s].map((t, i) => { const full = ((h + i * 7) % 4 === 0); return `<button class="slot" ${full ? 'disabled' : ''} onclick="pick(this,'${t}')">${t}</button>` }).join('')
+        }
+        function pick(b, t) { document.querySelectorAll('.slot').forEach(x => x.classList.remove('sel')); b.classList.add('sel'); sel = t }
+        function getR() { return JSON.parse(store.getItem('saveur_resa') || '[]') }
+        function book() {
+            const d = document.getElementById('r-date').value, n = document.getElementById('r-nom').value.trim(), t = document.getElementById('r-tel').value.trim(), c = document.getElementById('r-couv').value, note = document.getElementById('r-note').value.trim();
+            if (!d) return toast('Choisissez une date'); if (!sel) return toast('Choisissez un horaire'); if (!n) return toast('Indiquez votre nom'); if (t.replace(/\D/g, '').length < 8) return toast('Téléphone invalide');
+            const all = getR(); all.unshift({ id: Date.now(), d, h: sel, c, n, t, note }); store.setItem('saveur_resa', JSON.stringify(all));
+            document.getElementById('ok-txt').textContent = `${n} — ${c} couvert(s), le ${d} à ${sel}.`; document.getElementById('ok').style.display = 'block'; renderMine(); toast('Réservation confirmée ✅')
+        }
+        function cancel(id) { if (!confirm('Annuler cette réservation ?')) return; store.setItem('saveur_resa', JSON.stringify(getR().filter(r => r.id !== id))); renderMine(); toast('Réservation annulée') }
+        function renderMine() { const all = getR(); document.getElementById('mine').innerHTML = all.map(r => `<div class="resa-item">📅 <b>${r.d}</b> à <b>${r.h}</b> · ${r.c} pers.<br>👤 ${r.n} · ${r.t}${r.note ? '<br>💬 ' + r.note : ''}<br><button onclick="cancel(${r.id})">Annuler</button></div>`).join('') || '<p style="font-size:13.5px;color:#8a7a6a">Aucune réservation pour le moment.</p>' }
+        renderSlots(); renderMine();
+    </script>
+</body>
+
+</html>

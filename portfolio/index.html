@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tarchoune Mohamed — Développeur Full-Stack</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=IBM+Plex+Mono:wght@400;500;600&family=Inter:wght@400;500;600&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+    <div id="preloader">
+        <div class="preloader-box">
+            <div class="preloader-lines"></div>
+            <div class="preloader-track">
+                <div class="preloader-fill"></div>
+            </div>
+            <div class="preloader-pct">0%</div>
+        </div>
+    </div>
+    <div class="cursor-dot"></div>
+    <div class="cursor-ring"></div>
+    <canvas id="bg-canvas"></canvas>
+    <div id="scroll-progress"></div>
+    <nav class="editor-tabs">
+        <div class="wrap">
+            <span class="tab-brand">~/portfolio</span>
+            <a href="#hero" class="tab active">profil.php</a>
+            <a href="#skills" class="tab">competences.json</a>
+            <a href="#projects" class="tab">projets.log</a>
+            <a href="#contact" class="tab">contact.php</a>
+            <button id="theme-toggle" class="theme-toggle" aria-label="Changer de thème" type="button">☾</button>
+        </div>
+    </nav>
+    <header class="hero wrap" id="hero">
+        <div class="hero-grid">
+            <div class="reveal">
+                <div class="file-frame">
+                    <div class="file-frame__bar"><span class="dot dot--r"></span><span class="dot dot--y"></span><span
+                            class="dot dot--g"></span><span class="file-frame__name">profil.php</span></div>
+                    <div class="file-frame__body"><span class="c-comment">// Bonjour, je m'appelle</span>
+                        <span class="c-key">$dev</span> <span class="c-var">-></span> <span class="c-fn">nom</span> =
+                        <span class="c-str">"Tarchoune Mohamed"</span>;
+                        <span class="c-key">$dev</span> <span class="c-var">-></span> <span class="c-fn">role</span> =
+                        <span class="c-str">"<span id="typewriter"></span><span class="cursor-blink"></span>"</span>;
+                        <span class="c-key">$dev</span> <span class="c-var">-></span> <span class="c-fn">stack</span> =
+                        [<span class="c-str">"PHP"</span>, <span class="c-str">"MySQL"</span>, <span
+                            class="c-str">"JS"</span>];
+                        <span class="c-comment">// Je conçois des applications web</span>
+                        <span class="c-comment">// robustes, du back-end à l'interface.</span>
+                        <span class="c-fn">echo</span> <span class="c-str">"Disponible pour de nouveaux projets"</span>;
+                    </div>
+                </div>
+                <div class="hero-meta"><span class="badge">📍 Paris</span><span class="badge">💼 Ouvert aux missions
+                        freelance et en alternance</span><span class="badge">✉️
+                        mohamedamine.tarchoune.stmg@gmail.com</span></div>
+            </div>
+            <div class="reveal">
+                <h1 style="font-size:34px;margin-bottom:12px;">Je construis des applications web, de la base de données
+                    à l'interface.</h1>
+                <p style="color:var(--ink-soft);font-size:16px;">Découvrez mes réalisations ci-dessous. Chaque projet
+                    dispose d'une <strong>étude de cas détaillée</strong> et d'un <strong>site de démonstration
+                        multi-pages</strong> fonctionnel.</p>
+                <p style="margin-top:16px;display:flex;gap:10px;flex-wrap:wrap;"><a href="#projects" class="btn-run"
+                        style="text-decoration:none;display:inline-block;">./voir-projets.sh</a></p>
+            </div>
+        </div>
+    </header>
+    <section id="skills">
+        <div class="wrap">
+            <div class="section-head reveal"><span class="path">~/competences.json</span>
+                <h2>Compétences</h2>
+            </div>
+            <div class="pkg-json reveal">{
+                <span class="k">"dependencies"</span>: {
+                <span class="k">"PHP"</span>: <span class="s">"^5.0.0"</span><span class="skill-bar-track"><span
+                        class="skill-bar-fill" data-level="100"></span></span>,
+                <span class="k">"MySQL"</span>: <span class="s">"^4.0.0"</span><span class="skill-bar-track"><span
+                        class="skill-bar-fill" data-level="80"></span></span>,
+                <span class="k">"JavaScript"</span>: <span class="s">"^4.0.0"</span><span class="skill-bar-track"><span
+                        class="skill-bar-fill" data-level="80"></span></span>,
+                <span class="k">"HTML / CSS"</span>: <span class="s">"^5.0.0"</span><span class="skill-bar-track"><span
+                        class="skill-bar-fill" data-level="100"></span></span>,
+                <span class="k">"Python"</span>: <span class="s">"^3.0.0"</span><span class="skill-bar-track"><span
+                        class="skill-bar-fill" data-level="60"></span></span>
+                },
+                <span class="k">"devDependencies"</span>: {
+                <span class="k">"Git"</span>: <span class="s">"^4.0.0"</span><span class="skill-bar-track"><span
+                        class="skill-bar-fill" data-level="80"></span></span>,
+                <span class="k">"Docker"</span>: <span class="s">"^3.0.0"</span><span class="skill-bar-track"><span
+                        class="skill-bar-fill" data-level="60"></span></span>,
+                <span class="k">"Linux"</span>: <span class="s">"^4.0.0"</span><span class="skill-bar-track"><span
+                        class="skill-bar-fill" data-level="80"></span></span>
+                }
+                }
+            </div>
+        </div>
+    </section>
+    <section id="projects">
+        <div class="wrap">
+            <div class="section-head reveal"><span class="path">~/projets.log</span>
+                <h2>Projets</h2>
+            </div>
+            <div class="git-graph-wrap">
+                <svg class="git-graph-svg" width="28" height="652" viewBox="0 0 28 652" aria-hidden="true">
+                    <path d="M14 10 L14 642"></path>
+                    <circle cx="14" cy="10" r="6"></circle>
+                    <circle cx="14" cy="168" r="6"></circle>
+                    <circle cx="14" cy="326" r="6"></circle>
+                    <circle cx="14" cy="484" r="6"></circle>
+                </svg>
+                <div class="commit-list">
+                    <article class="commit reveal">
+                        <div class="commit-hash">#a3f9c1e<span class="date">02 Nov 2025</span></div>
+                        <div class="commit-title">Gestionnaire de tâches <span class="tag-featured">mis en avant</span>
+                        </div>
+                        <p class="commit-desc">Application web de gestion de tâches avec authentification, catégories et
+                            rappels par email.</p>
+                        <div class="commit-stack">// PHP, MySQL, JavaScript</div>
+                        <div class="commit-links"><a href="etude-taskflow.html">Étude de cas →</a><a
+                                href="demo-taskflow/index.html">Voir la démo →</a><a
+                                href="https://github.com/ton-pseudo/taskflow" target="_blank" rel="noopener">Code source
+                                →</a></div>
+                    </article>
+                    <article class="commit reveal">
+                        <div class="commit-hash">#7be21d4<span class="date">14 Aoû 2025</span></div>
+                        <div class="commit-title">API REST — Bibliothèque <span class="tag-featured">mis en avant</span>
+                        </div>
+                        <p class="commit-desc">API REST complète pour la gestion d'une bibliothèque (livres, emprunts,
+                            utilisateurs) avec documentation.</p>
+                        <div class="commit-stack">// PHP, MySQL, JWT</div>
+                        <div class="commit-links"><a href="etude-biblioapi.html">Étude de cas →</a><a
+                                href="demo-biblio/index.html">Voir la démo →</a><a
+                                href="https://github.com/ton-pseudo/biblio-api" target="_blank" rel="noopener">Code
+                                source →</a></div>
+                    </article>
+                    <article class="commit reveal">
+                        <div class="commit-hash">#c04e88f<span class="date">30 Mai 2025</span></div>
+                        <div class="commit-title">Site vitrine restaurant</div>
+                        <p class="commit-desc">Site vitrine responsive avec système de réservation en ligne connecté à
+                            une base de données.</p>
+                        <div class="commit-stack">// HTML, CSS, PHP, MySQL</div>
+                        <div class="commit-links"><a href="etude-saveur.html">Étude de cas →</a><a
+                                href="demo-saveur/index.html">Voir la démo →</a><a
+                                href="https://github.com/ton-pseudo/le-saveur" target="_blank" rel="noopener">Code
+                                source →</a></div>
+                    </article>
+                    <article class="commit reveal">
+                        <div class="commit-hash">#f19a276<span class="date">18 Fév 2025</span></div>
+                        <div class="commit-title">Dashboard analytics</div>
+                        <p class="commit-desc">Tableau de bord affichant des statistiques en temps réel à partir de
+                            données CSV importées.</p>
+                        <div class="commit-stack">// Python, JavaScript, Chart.js</div>
+                        <div class="commit-links"><a href="etude-insight.html">Étude de cas →</a><a
+                                href="demo-insight/index.html">Voir la démo →</a><a
+                                href="https://github.com/ton-pseudo/insight-dashboard" target="_blank"
+                                rel="noopener">Code source →</a></div>
+                    </article>
+                </div>
+            </div>
+            <div class="terminal reveal">
+                <div class="terminal__bar"><span class="dot dot--r"></span><span class="dot dot--y"></span><span
+                        class="dot dot--g"></span><span class="terminal__name">explore.sh — interactif</span></div>
+                <div class="terminal__body" id="term-body"></div>
+                <div class="terminal__input-line"><span class="terminal__prompt">$</span><input type="text"
+                        id="term-input" class="terminal__input" autocomplete="off" spellcheck="false"
+                        placeholder="tape 'help' puis Entrée"></div>
+            </div>
+        </div>
+    </section>
+    <section id="contact">
+        <div class="wrap">
+            <div class="section-head reveal"><span class="path">~/contact.php</span>
+                <h2>Contact</h2>
+            </div>
+            <p class="reveal" style="color:var(--ink-soft);margin-top:-12px;margin-bottom:24px;">Un projet en tête ?
+                Envoyez-moi un message, réponse sous 24h.</p>
+            <form class="contact-grid reveal" action="https://formsubmit.co/contact@votredomaine.fr" method="POST">
+                <input type="hidden" name="_captcha" value="false"><input type="hidden" name="_template" value="table">
+                <div class="field"><label>nom</label><input type="text" name="nom" required></div>
+                <div class="field"><label>email</label><input type="email" name="email" required></div>
+                <div class="field"><label>sujet</label><input type="text" name="sujet" required></div>
+                <div class="field"><label>message</label><textarea name="message" required></textarea></div>
+                <button type="submit" class="btn-run">./envoyer.sh</button>
+            </form>
+        </div>
+    </section>
+    <footer class="wrap"><span>© 2026 Tarchoune Mohamed — Tous droits réservés</span><span><a
+                href="https://github.com/ton-pseudo" target="_blank">GitHub</a> · <a href="#">LinkedIn</a></span>
+    </footer>
+    <script>
+        const store = { m: {}, getItem(k) { try { return localStorage.getItem(k) } catch (e) { return (k in this.m) ? this.m[k] : null } }, setItem(k, v) { try { localStorage.setItem(k, v) } catch (e) { this.m[k] = String(v) } }, removeItem(k) { try { localStorage.removeItem(k) } catch (e) { delete this.m[k] } } };
+        const isTouch = window.matchMedia('(hover: none), (pointer: coarse)').matches;
+        const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+        (function preloader() { const el = document.getElementById('preloader'); if (!el) return; const linesBox = el.querySelector('.preloader-lines'); const fill = el.querySelector('.preloader-fill'); const pctLabel = el.querySelector('.preloader-pct'); const steps = ['$ git clone portfolio.git', '$ composer install', '$ npm install', '$ npm run build', 'Compilation des assets…']; if (prefersReducedMotion) { el.classList.add('is-hidden'); return; } let i = 0, pct = 0; function addLine(text, ok) { const line = document.createElement('div'); if (ok) { const s = document.createElement('span'); s.className = 'ok'; s.textContent = '✓ '; line.appendChild(s); line.appendChild(document.createTextNode(text)); } else line.textContent = text; linesBox.appendChild(line); } const t1 = setInterval(() => { if (i < steps.length) { addLine(steps[i], i > 0); i++; } else clearInterval(t1); }, 260); const t2 = setInterval(() => { pct = Math.min(100, pct + Math.random() * 14 + 6); fill.style.width = pct + '%'; pctLabel.textContent = Math.floor(pct) + '%'; if (pct >= 100) { clearInterval(t2); setTimeout(() => el.classList.add('is-hidden'), 350); } }, 180); setTimeout(() => el.classList.add('is-hidden'), 3500); })();
+        (function customCursor() { if (isTouch || prefersReducedMotion) return; const dot = document.querySelector('.cursor-dot'), ring = document.querySelector('.cursor-ring'); if (!dot || !ring) return; let mx = innerWidth / 2, my = innerHeight / 2, rx = mx, ry = my; window.addEventListener('mousemove', e => { mx = e.clientX; my = e.clientY; dot.style.left = mx + 'px'; dot.style.top = my + 'px'; }); (function loop() { rx += (mx - rx) * 0.18; ry += (my - ry) * 0.18; ring.style.left = rx + 'px'; ring.style.top = ry + 'px'; requestAnimationFrame(loop); })(); const sel = 'a,button,input,textarea,select,.tab,.btn-run,.theme-toggle'; document.addEventListener('mouseover', e => { if (e.target.closest(sel)) ring.classList.add('is-active'); }); document.addEventListener('mouseout', e => { if (e.target.closest(sel)) ring.classList.remove('is-active'); }); })();
+        (function bg() { const c = document.getElementById('bg-canvas'); if (!c || prefersReducedMotion) return; const ctx = c.getContext('2d'); let w, h, dots = []; const gap = 42; let mx = -9999, my = -9999; function col() { return getComputedStyle(document.documentElement).getPropertyValue('--accent').trim() || '#2F6F4F'; } function rs() { w = c.width = innerWidth; h = c.height = innerHeight; dots = []; for (let x = gap / 2; x < w; x += gap)for (let y = gap / 2; y < h; y += gap)dots.push({ ox: x, oy: y }); } rs(); window.addEventListener('resize', rs); window.addEventListener('mousemove', e => { mx = e.clientX; my = e.clientY; }); (function draw() { ctx.clearRect(0, 0, w, h); const color = col(); for (const d of dots) { const dx = mx - d.ox, dy = my - d.oy, dist = Math.sqrt(dx * dx + dy * dy); let px = d.ox, py = d.oy, a = 0.10, s = 1.3; if (dist < 140) { const f = 1 - dist / 140; px = d.ox - dx * f * 0.25; py = d.oy - dy * f * 0.25; a = 0.10 + f * 0.55; s = 1.3 + f * 1.8; } ctx.beginPath(); ctx.arc(px, py, s, 0, Math.PI * 2); ctx.fillStyle = color; ctx.globalAlpha = a; ctx.fill(); } ctx.globalAlpha = 1; requestAnimationFrame(draw); })(); })();
+        (function typew() { const el = document.getElementById('typewriter'); if (!el) return; const roles = ['Développeur Full-Stack', 'PHP & MySQL', 'Intégrateur front-end', 'Résolveur de bugs professionnel']; let r = 0, ch = 0, del = false; (function tick() { const cur = roles[r]; if (!del) { ch++; el.textContent = cur.slice(0, ch); if (ch === cur.length) { del = true; setTimeout(tick, 1400); return; } } else { ch--; el.textContent = cur.slice(0, ch); if (ch === 0) { del = false; r = (r + 1) % roles.length; } } setTimeout(tick, del ? 35 : 65); })(); })();
+        (function scrollFx() { const bar = document.getElementById('scroll-progress'); function up() { const h = document.documentElement; const s = h.scrollTop / (h.scrollHeight - h.clientHeight) * 100; if (bar) bar.style.width = (isNaN(s) ? 0 : s) + '%'; } window.addEventListener('scroll', up, { passive: true }); up(); const ro = new IntersectionObserver(es => es.forEach(x => { if (x.isIntersecting) { x.target.classList.add('is-visible'); ro.unobserve(x.target); } }), { threshold: 0.15 }); document.querySelectorAll('.reveal').forEach(el => ro.observe(el)); const svg = document.querySelector('.git-graph-svg'); if (svg) { const go = new IntersectionObserver(es => es.forEach(x => { if (x.isIntersecting) { svg.classList.add('is-drawn'); go.disconnect(); } }), { threshold: 0.2 }); go.observe(svg); } const so = new IntersectionObserver(es => es.forEach(x => { if (x.isIntersecting) { x.target.style.width = x.target.dataset.level + '%'; so.unobserve(x.target); } }), { threshold: 0.4 }); document.querySelectorAll('.skill-bar-fill').forEach(b => so.observe(b)); const tabs = document.querySelectorAll('.editor-tabs .tab'); const no = new IntersectionObserver(es => es.forEach(x => { if (x.isIntersecting) { const id = x.target.getAttribute('id'); tabs.forEach(t => t.classList.toggle('active', t.getAttribute('href') === '#' + id)); } }), { rootMargin: '-40% 0px -50% 0px' }); document.querySelectorAll('section[id],header[id]').forEach(s => no.observe(s)); })();
+        (function theme() { const b = document.getElementById('theme-toggle'), rt = document.documentElement; const sv = store.getItem('portfolio-theme'), dk = matchMedia('(prefers-color-scheme: dark)').matches; function ap(t) { rt.setAttribute('data-theme', t); if (b) b.textContent = t === 'dark' ? '☀' : '☾'; } ap(sv || (dk ? 'dark' : 'light')); if (b) b.addEventListener('click', () => { const n = rt.getAttribute('data-theme') === 'dark' ? 'light' : 'dark'; ap(n); store.setItem('portfolio-theme', n); }); })();
+        (function term() { const body = document.getElementById('term-body'), inp = document.getElementById('term-input'); if (!body || !inp) return; const R = { help: "Commandes dispo : help, whoami, competences, projets, contact, clear", whoami: "Tarchoune Mohamed — développeur full-stack passionné par le code propre.", competences: "PHP · MySQL · JavaScript · HTML/CSS · Python · Git · Docker", projets: "→ 4 projets : TaskFlow (gestionnaire), BiblioAPI (REST+JWT), Le Saveur (restaurant), Insight (dashboard). Voir #projects.", contact: "→ Formulaire en bas de page, réponse sous 24h.", sudo: "Sympa d'avoir essayé. Mais non." }; function pr(t, c) { const p = document.createElement('p'); if (c) p.className = c; p.textContent = t; body.appendChild(p); body.scrollTop = body.scrollHeight; } pr("Tape 'help' pour voir les commandes disponibles."); inp.addEventListener('keydown', e => { if (e.key !== 'Enter') return; const raw = inp.value.trim(); if (!raw) return; pr('$ ' + raw, 'prompt-echo'); if (raw === 'clear') body.innerHTML = ''; else { const k = raw.toLowerCase(); pr(R[k] || `commande introuvable : ${raw} — tape "help"`, R[k] ? null : 'out-err'); } inp.value = ''; }); })();
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>BiblioAPI — Documentation</title>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap"
+    rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+  <nav class="demo-topbar"><span class="logo">📚 BiblioAPI</span>
+    <a class="tf-link" href="index.html">Accueil</a><a class="tf-link active"
+      href="documentation.html">Documentation</a><a class="tf-link" href="playground.html">Playground</a>
+    <span class="spacer"></span><a class="back" href="../etude-biblioapi.html">📄 Étude de cas</a><a class="back"
+      href="../index.html">← Portfolio</a>
+  </nav>
+  <div class="docs-layout">
+    <aside class="docs-side">
+      <div class="lbl">GUIDE</div><a href="#intro">Introduction</a><a href="#auth">Authentification</a><a
+        href="#erreurs">Erreurs</a>
+      <div class="lbl">ENDPOINTS</div><a href="#login">POST /login</a><a href="#getbooks">GET /books</a><a
+        href="#postbooks">POST /books</a><a href="#loans">POST /loans</a><a href="#retour">DELETE /loans/{id}</a>
+    </aside>
+    <main>
+      <div class="doc-card" id="intro">
+        <h3>Introduction</h3>
+        <p>Base URL <span class="mono" style="color:#5FCE8F">https://api.biblio.fr/v1</span> · JSON partout · UTF-8.
+          Toutes les réponses incluent le bon code HTTP. Testez chaque route dans le <a href="playground.html"
+            style="color:#5FCE8F">playground →</a></p>
+      </div>
+      <div class="doc-card" id="auth">
+        <h3>🔑 Authentification JWT</h3>
+        <p>Après <span class="mono">POST /login</span>, envoyez <span class="mono">Authorization: Bearer
+            &lt;token&gt;</span>. Token HS256, expiration 1 h (<span class="mono">exp</span>). Sans token → <span
+            class="mono">401 Unauthorized</span>.</p>
+        <pre class="code">Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJpZCI6MSwiYXQiOjE3…</pre>
+      </div>
+      <div class="doc-card" id="login">
+        <h3><span class="m post">POST</span>/login</h3>
+        <p>Obtenir un token. Compte démo : <b style="color:#fff">admin@biblio.fr / admin123</b></p>
+        <table class="ref">
+          <tr>
+            <th>Champ</th>
+            <th>Type</th>
+            <th>Requis</th>
+          </tr>
+          <tr>
+            <td class="mono">email</td>
+            <td>string</td>
+            <td>oui</td>
+          </tr>
+          <tr>
+            <td class="mono">password</td>
+            <td>string</td>
+            <td>oui</td>
+          </tr>
+        </table>
+        <pre class="code">→ 200 OK
+{ "token": "eyJhbGciOiJIUzI1NiJ9…", "expires_in": 3600 }
+
+→ 401 Unauthorized
+{ "error": "Identifiants invalides", "code": "BAD_CREDENTIALS" }</pre>
+      </div>
+      <div class="doc-card" id="getbooks">
+        <h3><span class="m get">GET</span>/books</h3>
+        <p>Liste paginée. Auth requise.</p>
+        <table class="ref">
+          <tr>
+            <th>Param</th>
+            <th>Défaut</th>
+            <th>Description</th>
+          </tr>
+          <tr>
+            <td class="mono">q</td>
+            <td>—</td>
+            <td>Recherche titre/auteur</td>
+          </tr>
+          <tr>
+            <td class="mono">dispo</td>
+            <td>—</td>
+            <td>1 = disponibles only</td>
+          </tr>
+          <tr>
+            <td class="mono">page</td>
+            <td>1</td>
+            <td>Page (30/p, max 100)</td>
+          </tr>
+        </table>
+        <pre class="code">→ 200 OK
+[
+  { "id": 1, "titre": "Le Petit Prince",
+    "auteur": "Antoine de Saint-Exupéry",
+    "annee": 1943, "dispo": true }
+]</pre>
+      </div>
+      <div class="doc-card" id="postbooks">
+        <h3><span class="m post">POST</span>/books <small style="color:#E5B567">· admin</small></h3>
+        <p>Créer un livre. Titre + auteur requis.</p>
+        <pre class="code">→ 201 Created
+{ "id": 42, "titre": "Dune", "auteur": "Frank Herbert",
+  "annee": 1965, "dispo": true }
+
+→ 422 Unprocessable Entity
+{ "error": "Validation échouée",
+  "fields": { "titre": "requis" } }</pre>
+      </div>
+      <div class="doc-card" id="loans">
+        <h3><span class="m post">POST</span>/loans</h3>
+        <p>Emprunter un livre (transaction atomique).</p>
+        <pre class="code">Body: { "book_id": 2 }
+
+→ 201 Created
+{ "success": "emprunt enregistré",
+  "book": { "id": 2, "dispo": false } }
+
+→ 409 Conflict
+{ "error": "Livre déjà emprunté", "code": "BOOK_UNAVAILABLE" }</pre>
+      </div>
+      <div class="doc-card" id="retour">
+        <h3><span class="m del">DELETE</span>/loans/{id}</h3>
+        <p>Rendre un livre. Remet <span class="mono">dispo = true</span>.</p>
+        <pre class="code">→ 200 OK
+{ "success": "retour enregistré", "book_id": 2 }
+
+→ 404 Not Found
+{ "error": "Emprunt introuvable" }</pre>
+      </div>
+      <div class="doc-card" id="erreurs">
+        <h3>⚠️ Codes d'erreur</h3>
+        <table class="ref">
+          <tr>
+            <th>HTTP</th>
+            <th>Signification</th>
+          </tr>
+          <tr>
+            <td class="mono">400</td>
+            <td>Requête malformée</td>
+          </tr>
+          <tr>
+            <td class="mono">401</td>
+            <td>Token manquant / invalide / expiré</td>
+          </tr>
+          <tr>
+            <td class="mono">403</td>
+            <td>Droits insuffisants (admin requis)</td>
+          </tr>
+          <tr>
+            <td class="mono">404</td>
+            <td>Ressource introuvable</td>
+          </tr>
+          <tr>
+            <td class="mono">409</td>
+            <td>Conflit (déjà emprunté)</td>
+          </tr>
+          <tr>
+            <td class="mono">422</td>
+            <td>Validation échouée (détail par champ)</td>
+          </tr>
+        </table>
+        <p style="margin-top:12px">Format unique : <span class="mono">{ "error": "…", "code": "…" }</span></p>
+      </div>
+      <div style="text-align:center;margin:26px 0"><a class="btn" href="playground.html">Passer au playground →</a>
+      </div>
+    </main>
+  </div>
+  <footer class="site">BiblioAPI — démo fictive par <a href="../index.html">Tarchoune Mohamed</a> · <a
+      href="../etude-biblioapi.html">Lire l'étude de cas</a></footer>
+</body>
+
+</html>

@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>Insight — Import CSV</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+    <div class="mobnav"><a href="index.html">🏠 Accueil</a><a href="rapports.html">📈 Rapports</a><a class="active"
+            href="import.html">📤 Import</a><a href="../etude-insight.html">📄 Étude</a></div>
+    <aside class="side">
+        <div class="logo">📊 In<span>sight</span></div><small class="tag">Dashboard analytics · démo</small>
+        <a class="nav" href="index.html">🏠 Vue d'ensemble</a><a class="nav" href="rapports.html">📈 Rapports</a><a
+            class="nav active" href="import.html">📤 Import CSV</a>
+        <div class="tip">💡 100 % local : votre fichier est lu dans le navigateur via <b
+                style="color:#fff">FileReader</b>, jamais envoyé sur un serveur.</div>
+        <div class="back"><a href="../etude-insight.html">📄 Étude de cas</a><a href="../index.html">← Portfolio</a>
+        </div>
+    </aside>
+    <main class="main">
+        <div class="top">
+            <div>
+                <h1>Centre d'import</h1><small>Glissez un CSV → tout le dashboard se met à jour</small>
+            </div>
+            <div><button class="btn btn-ghost" onclick="downloadSample()">📄 CSV d'exemple</button> <button class="btn"
+                    onclick="resetSample()">↺ Réinitialiser</button></div>
+        </div>
+        <div class="drop" id="dz" style="padding:44px 18px" onclick="document.getElementById('file').click()">📁
+            <b>Glissez votre fichier .CSV ici</b><br><small>ou cliquez pour parcourir — séparateur , ou ;
+                accepté</small></div>
+        <input type="file" id="file" accept=".csv" style="display:none" onchange="importCSV(this)">
+        <div id="preview"></div>
+        <div class="grid2">
+            <div class="card">
+                <h3>📜 Historique des imports</h3>
+                <div id="hist"></div>
+            </div>
+            <div class="card">
+                <h3>📐 Format attendu</h3>
+                <pre class="code">date,ventes,visiteurs
+2025-01-01,4200,8200
+2025-02-01,5800,10500
+2025-03-01,5100,9800</pre>
+                <p style="font-size:13px;color:#8A93A3">• 1<sup>re</sup> ligne = en-têtes (ignorée)<br>• <b
+                        style="color:#fff">Tolérant</b> : vide → 0, lignes vides ignorées<br>• En production, le parsing
+                    Python (pandas) applique les mêmes règles — voir l'<a href="../etude-insight.html"
+                        style="color:#4ADE80">étude de cas</a>.</p>
+            </div>
+        </div>
+        <div id="okmsg"></div>
+    </main>
+    <script>
+        const store = { m: {}, getItem(k) { try { return localStorage.getItem(k) } catch (e) { return (k in this.m) ? this.m[k] : null } }, setItem(k, v) { try { localStorage.setItem(k, v) } catch (e) { this.m[k] = String(v) } }, removeItem(k) { try { localStorage.removeItem(k) } catch (e) { delete this.m[k] } } };
+        function getHist() { return JSON.parse(store.getItem('insight_hist') || '[]') }
+        function renderHist() { const h = getHist(); document.getElementById('hist').innerHTML = h.map(x => `<div class="hist">📄 <div><b>${x.name}</b><br><small>${x.at}</small></div><span class="sp"></span><span class="st ok">${x.n} lignes</span></div>`).join('') || '<p style="color:#6B7280;font-size:13px">Aucun import pour le moment. Testez le CSV d\'exemple !</p>' }
+        function downloadSample() { const csv = 'date,ventes,visiteurs\n2025-01-01,4200,8200\n2025-02-01,5800,10500\n2025-03-01,5100,9800\n2025-04-01,7800,14200\n2025-05-01,9200,16800\n2025-06-01,8400,15900'; const a = document.createElement('a'); a.href = URL.createObjectURL(new Blob([csv], { type: 'text/csv' })); a.download = 'ventes-exemple.csv'; a.click() }
+        function resetSample() { store.setItem('insight_data', JSON.stringify({ labels: ['Jan', 'Fév', 'Mar', 'Avr', 'Mai'], ventes: [4200, 5800, 5100, 7800, 9200], visiteurs: [8200, 10500, 9800, 14200, 16800] })); document.getElementById('okmsg').innerHTML = '<div class="card" style="border-color:#4ADE80">✅ Dataset d\'exemple restauré. <a href="index.html" style="color:#4ADE80">Voir le dashboard →</a></div>'; renderHist() }
+        function parseCSV(text) { const lines = text.trim().split('\n').slice(1); const L = [], V = [], VI = []; let bad = 0; lines.forEach(l => { if (!l.trim()) return; const [d, v, vi] = l.split(/[;,]/); if (!d) { bad++; return } L.push(d.trim().slice(5) || d.trim()); V.push(parseFloat(v) || 0); VI.push(parseFloat(vi) || 0) }); return { L, V, VI, bad } }
+        function importCSV(input) {
+            const f = input.files[0]; if (!f) return; const r = new FileReader(); r.onload = () => {
+                try {
+                    const { L, V, VI, bad } = parseCSV(r.result); if (!L.length) throw 0;
+                    store.setItem('insight_data', JSON.stringify({ labels: L, ventes: V, visiteurs: VI }));
+                    const h = getHist(); h.unshift({ name: f.name, n: L.length, at: new Date().toLocaleString('fr-FR') }); store.setItem('insight_hist', JSON.stringify(h.slice(0, 10)));
+                    const ca = V.reduce((a, b) => a + b, 0);
+                    document.getElementById('preview').innerHTML = `<div class="card" style="border-color:#4ADE80"><h3>✅ Import réussi — ${L.length} périodes${bad ? ` <small style="color:#E5B567">(${bad} ligne(s) ignorée(s))</small>` : ''}</h3><div class="kpis" style="margin:0"><div class="kpi"><small>CA total</small><b>${ca.toLocaleString('fr-FR')} €</b></div><div class="kpi"><small>Périodes</small><b style="font-size:18px">${L[0]} → ${L[L.length - 1]}</b></div></div><p style="margin-top:14px"><a class="btn" href="index.html">Voir le dashboard →</a> <a class="btn btn-ghost" href="rapports.html">Voir les rapports</a></p></div>`;
+                    renderHist()
+                } catch (e) { document.getElementById('preview').innerHTML = '<div class="card" style="border-color:#F87171"><h3>❌ CSV invalide</h3><p style="font-size:13px;color:#8A93A3">Format attendu : <b style="color:#fff">date,ventes,visiteurs</b> — une ligne d\'en-tête puis vos données.</p></div>' }
+            }; r.readAsText(f); input.value = ''
+        }
+        const dz = document.getElementById('dz');['dragover', 'dragenter'].forEach(e => dz.addEventListener(e, ev => { ev.preventDefault(); dz.style.borderColor = '#4ADE80' }));['dragleave', 'drop'].forEach(e => dz.addEventListener(e, ev => { ev.preventDefault(); dz.style.borderColor = '' })); dz.addEventListener('drop', ev => { const f = ev.dataTransfer.files[0]; if (f) importCSV({ files: [f] }) });
+        renderHist();
+    </script>
+</body>
+
+</html>

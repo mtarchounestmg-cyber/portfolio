@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="fr" data-theme="dark">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Étude de cas — BiblioAPI · Tarchoune Mohamed</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link
+    href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=IBM+Plex+Mono:wght@400;500;600&family=Inter:wght@400;500;600&display=swap"
+    rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+  <div class="cursor-dot"></div>
+  <div class="cursor-ring"></div><canvas id="bg-canvas"></canvas>
+  <div id="scroll-progress"></div>
+  <nav class="editor-tabs">
+    <div class="wrap"><span class="tab-brand">~/portfolio</span>
+      <a href="index.html#hero" class="tab">profil.php</a><a href="index.html#projects"
+        class="tab active">biblioapi.md</a><a href="index.html#contact" class="tab">contact.php</a>
+      <button id="theme-toggle" class="theme-toggle" aria-label="Changer de thème" type="button">☀</button>
+    </div>
+  </nav>
+  <div class="wrap">
+    <div class="breadcrumb reveal"><a href="index.html">←
+        Portfolio</a><span>/</span><span>projets.log</span><span>/</span><strong>biblioapi.md</strong></div>
+    <header class="etude-hero reveal">
+      <div class="commit-hash">#7be21d4<span class="date">14 Aoû 2025</span> <span class="tag-featured">mis en
+          avant</span></div>
+      <h1>BiblioAPI — API REST Bibliothèque</h1>
+      <p class="lede">API REST complète pour gérer une bibliothèque : catalogue de livres, emprunts, utilisateurs.
+        Authentification JWT (HS256 codé à la main, sans librairie), documentation interactive et codes HTTP rigoureux.
+      </p>
+      <div class="etude-meta"><span class="chip chip--hash">#7be21d4</span><span class="chip chip--accent">PHP
+          8</span><span class="chip">MySQL 8</span><span class="chip">JWT HS256</span><span class="chip">REST +
+          JSON</span><span class="chip">~2 semaines</span></div>
+      <div class="cta-row"><a class="btn-primary" href="demo-biblio/index.html">Voir la démo live →</a><a
+          class="btn-secondary" href="https://github.com/ton-pseudo/biblio-api" target="_blank" rel="noopener">Code
+          source ↗</a><a class="btn-secondary" href="index.html#projects">← Tous les projets</a></div>
+      <div class="etude-toc"><a href="#presentation">01 · Présentation</a><a href="#technique">02 · Approche
+          technique</a><a href="#logique">03 · Logique dev</a><a href="#architecture">04 · Architecture</a><a
+          href="#demo">05 · Démo</a></div>
+    </header>
+    <section class="etude-section reveal" id="presentation">
+      <div class="section-head"><span class="path">~/01-presentation.md</span>
+        <h2>Présentation générale</h2>
+      </div>
+      <p><strong>Contexte.</strong> Une petite bibliothèque municipale veut exposer son catalogue à un site web et à une
+        appli mobile. Il faut donc <strong>une API unique, documentée et sécurisée</strong>, plutôt que deux back-ends
+        séparés.</p>
+      <p><strong>Objectifs.</strong> Endpoints REST prévisibles · auth JWT stateless · validation stricte · erreurs JSON
+        normalisées · documentation testable sans Postman.</p>
+      <div class="feature-grid">
+        <div class="feature-card"><b>🔑 POST /login</b><span>Échange email + mot de passe contre un JWT valide 1
+            h.</span></div>
+        <div class="feature-card"><b>📖 GET /books</b><span>Liste paginée, recherche ?q=, filtre ?dispo=1.</span></div>
+        <div class="feature-card"><b>➕ POST /books</b><span>Création (rôle admin), validation 422 si champs
+            manquants.</span></div>
+        <div class="feature-card"><b>📦 POST /loans</b><span>Emprunt : vérifie la dispo, 409 Conflict si déjà
+            emprunté.</span></div>
+        <div class="feature-card"><b>↩️ DELETE /loans/{id}</b><span>Retour de livre, remet le stock à disponible.</span>
+        </div>
+        <div class="feature-card"><b>📄 Docs live</b><span>Chaque endpoint est exécutable depuis la
+            documentation.</span></div>
+      </div>
+    </section>
+    <section class="etude-section reveal" id="technique">
+      <div class="section-head"><span class="path">~/02-technique.md</span>
+        <h2>Approche technique</h2>
+      </div>
+      <p>Le parti pris : <strong>zéro dépendance Composer</strong>. Le JWT (header.payload.signature en HMAC-SHA256) est
+        implémenté en ~60 lignes pour maîtriser la sécurité de bout en bout. Le routeur parse
+        <code>REQUEST_METHOD + PATH_INFO</code> et dispatche vers des contrôleurs fins.</p>
+      <table class="spec">
+        <tr>
+          <th>Choix</th>
+          <th>Technologie</th>
+          <th>Pourquoi</th>
+        </tr>
+        <tr>
+          <td><strong>Style</strong></td>
+          <td>REST + JSON, URLs plurielles (/books)</td>
+          <td>Convention universelle, cacheable, compréhensible.</td>
+        </tr>
+        <tr>
+          <td><strong>Auth</strong></td>
+          <td>JWT HS256 maison, Bearer header</td>
+          <td>Stateless : parfait pour web + mobile ; pas de session.</td>
+        </tr>
+        <tr>
+          <td><strong>Back</strong></td>
+          <td>PHP 8 natif, routeur custom</td>
+          <td>Léger, déployable sur mutualisé, code lisible.</td>
+        </tr>
+        <tr>
+          <td><strong>Données</strong></td>
+          <td>MySQL + PDO préparé</td>
+          <td>Transactions pour emprunt (livre + loan atomiques).</td>
+        </tr>
+        <tr>
+          <td><strong>Erreurs</strong></td>
+          <td>JSON { error, code } + HTTP 400/401/404/409/422</td>
+          <td>Le client sait toujours quoi afficher.</td>
+        </tr>
+        <tr>
+          <td><strong>Docs</strong></td>
+          <td>Page HTML + JS (Swagger-like maison)</td>
+          <td>Test live sans outil externe, exemples cURL/JS/PHP.</td>
+        </tr>
+      </table>
+    </section>
+    <section class="etude-section reveal" id="logique">
+      <div class="section-head"><span class="path">~/03-logique.md</span>
+        <h2>Logique de développement</h2>
+      </div>
+      <ol class="steps">
+        <li><strong>Contrat d'API d'abord.</strong> J'ai écrit la liste des endpoints + exemples JSON <em>avant</em> de
+          coder, comme un contrat que le front et le mobile partagent.</li>
+        <li><strong>Routeur minimal.</strong> <code>GET /books/12</code> → <code>BookController::show(12)</code>.
+          Méthode + regex d'URL, 404 JSON si aucune route.</li>
+        <li><strong>Middleware d'auth.</strong> Chaque route protégée extrait le <code>Authorization: Bearer …</code>,
+          vérifie la signature HMAC et l'expiration <code>exp</code>.</li>
+        <li><strong>Emprunt transactionnel.</strong>
+          <code>BEGIN; UPDATE books SET dispo=0 WHERE id=? AND dispo=1; INSERT INTO loans…; COMMIT;</code> — si 0 ligne
+          affectée → 409.</li>
+        <li><strong>Validation stricte.</strong> Titre/auteur requis, année 1000–année+1, pagination bornée (max 100).
+          Erreurs 422 avec détail par champ.</li>
+      </ol>
+      <h3>Extrait — vérification JWT (PHP, sans librairie)</h3>
+      <div class="codeblock">
+        <div class="codeblock__bar"><span class="dot dot--r"></span><span class="dot dot--y"></span><span
+            class="dot dot--g"></span><span>src/Auth/Jwt.php</span></div>
+        <pre><span class="tk-f">public static function</span> <span class="tk-k">verify</span>(<span class="tk-s">string</span> $jwt): ?<span class="tk-s">array</span> {
+    [$h, $p, $s] = <span class="tk-k">explode</span>(<span class="tk-s">'.'</span>, $jwt) + [null,null,null];
+    $expect = <span class="tk-k">hash_hmac</span>(<span class="tk-s">'sha256'</span>, <span class="tk-s">"$h.$p"</span>, $_ENV[<span class="tk-s">'JWT_SECRET'</span>], <span class="tk-k">true</span>);
+    <span class="tk-f">if</span> (!<span class="tk-k">hash_equals</span>($expect, self::<span class="tk-k">b64url_decode</span>($s))) <span class="tk-f">return null</span>;
+    $payload = <span class="tk-k">json_decode</span>(self::<span class="tk-k">b64url_decode</span>($p), <span class="tk-k">true</span>);
+    <span class="tk-f">return</span> ($payload[<span class="tk-s">'exp'</span>] ?? 0) &gt; <span class="tk-k">time</span>() ? $payload : <span class="tk-k">null</span>;
+}</pre>
+      </div>
+      <h3>Extrait — réponse d'erreur normalisée</h3>
+      <div class="codeblock">
+        <div class="codeblock__bar"><span>POST /loans → 409</span></div>
+        <pre>{
+  <span class="tk-s">"error"</span>: <span class="tk-s">"Livre déjà emprunté"</span>,
+  <span class="tk-s">"code"</span>: <span class="tk-s">"BOOK_UNAVAILABLE"</span>,
+  <span class="tk-s">"book_id"</span>: 3
+}</pre>
+      </div>
+    </section>
+    <section class="etude-section reveal" id="architecture">
+      <div class="section-head"><span class="path">~/04-architecture.md</span>
+        <h2>Architecture du site</h2>
+      </div>
+      <div class="archi">
+        <div class="archi-box"><b>CLIENTS</b><span>Site web<br>Appli mobile<br>cURL / Postman</span></div>
+        <div class="archi-arrow">⇄</div>
+        <div class="archi-box"><b>API PHP</b><span>index.php (routeur)<br>Auth · Books · Loans<br>JSON in/out</span>
+        </div>
+        <div class="archi-arrow">⇄</div>
+        <div class="archi-box"><b>MYSQL</b><span>users · books<br>loans<br>Index sur dispo</span></div>
+      </div>
+      <h3>Structure des dossiers</h3>
+      <div class="codeblock">
+        <div class="codeblock__bar"><span>arborescence</span></div>
+        <pre>biblio-api/
+├── public/index.php     <span class="tk-c"># point d'entrée + routeur</span>
+├── src/
+│   ├── Auth/Jwt.php     <span class="tk-c"># sign / verify HS256</span>
+│   ├── Controllers/     <span class="tk-c"># Auth, Book, Loan</span>
+│   └── Database.php     <span class="tk-c"># singleton PDO</span>
+├── docs/                <span class="tk-c"># documentation HTML interactive</span>
+└── database.sql</pre>
+      </div>
+      <h3>Table des routes</h3>
+      <table class="spec">
+        <tr>
+          <th>Méthode</th>
+          <th>Route</th>
+          <th>Auth</th>
+          <th>Succès</th>
+        </tr>
+        <tr>
+          <td><strong>POST</strong></td>
+          <td>/login</td>
+          <td>Non</td>
+          <td>200 + { token }</td>
+        </tr>
+        <tr>
+          <td><strong>GET</strong></td>
+          <td>/books?q=&amp;page=</td>
+          <td>Bearer</td>
+          <td>200 + [ … ]</td>
+        </tr>
+        <tr>
+          <td><strong>POST</strong></td>
+          <td>/books</td>
+          <td>Bearer + admin</td>
+          <td>201 + livre</td>
+        </tr>
+        <tr>
+          <td><strong>POST</strong></td>
+          <td>/loans</td>
+          <td>Bearer</td>
+          <td>201 ou 409</td>
+        </tr>
+        <tr>
+          <td><strong>DELETE</strong></td>
+          <td>/loans/{id}</td>
+          <td>Bearer</td>
+          <td>200 + retour OK</td>
+        </tr>
+      </table>
+    </section>
+    <section class="etude-section reveal" id="demo">
+      <div class="section-head"><span class="path">~/05-demo.md</span>
+        <h2>Démonstration</h2>
+      </div>
+      <div class="demo-banner">
+        <div>
+          <h3>🚀 Testez l'API en live</h3>
+          <p>Démo multi-pages : présentation, documentation de référence et playground exécutable (login
+            <code>admin@biblio.fr / admin123</code>).</p>
+          <div class="demo-pages"><span>01 · Accueil</span><span>02 · Documentation</span><span>03 · Playground</span>
+          </div>
+        </div>
+        <div><a class="btn-primary" href="demo-biblio/index.html">Découvrir la démo →</a></div>
+      </div>
+      <h3>Évolutions prévues</h3>
+      <p>Refresh tokens + rotation · rôles fins (RBAC) · rate limiting · pagination curseur · export OpenAPI/Swagger
+        généré · tests PHPUnit.</p>
+    </section>
+    <div class="etude-nav"><a href="etude-taskflow.html"><small>← Projet précédent</small><b>TaskFlow</b></a><a
+        href="etude-saveur.html"><small>Projet suivant →</small><b>Le Saveur — Restaurant</b></a></div>
+  </div>
+  <footer class="wrap"><span>© 2026 Tarchoune Mohamed — Étude de cas BiblioAPI</span><span><a
+        href="index.html">Portfolio</a> · <a href="https://github.com/ton-pseudo" target="_blank">GitHub</a></span>
+  </footer>
+  <script>
+    const store = { m: {}, getItem(k) { try { return localStorage.getItem(k) } catch (e) { return (k in this.m) ? this.m[k] : null } }, setItem(k, v) { try { localStorage.setItem(k, v) } catch (e) { this.m[k] = String(v) } }, removeItem(k) { try { localStorage.removeItem(k) } catch (e) { delete this.m[k] } } }; const rt = document.documentElement; const sv = store.getItem('portfolio-theme'); if (sv) rt.setAttribute('data-theme', sv); const b = document.getElementById('theme-toggle'); function sync() { b.textContent = rt.getAttribute('data-theme') === 'dark' ? '☀' : '☾'; } sync(); b.addEventListener('click', () => { rt.setAttribute('data-theme', rt.getAttribute('data-theme') === 'dark' ? 'light' : 'dark'); store.setItem('portfolio-theme', rt.getAttribute('data-theme')); sync(); });
+    const bar = document.getElementById('scroll-progress'); addEventListener('scroll', () => { const h = document.documentElement; bar.style.width = (h.scrollTop / (h.scrollHeight - h.clientHeight) * 100) + '%'; }, { passive: true });
+    const ro = new IntersectionObserver(es => es.forEach(x => { if (x.isIntersecting) { x.target.classList.add('is-visible'); ro.unobserve(x.target); } }), { threshold: .12 }); document.querySelectorAll('.reveal').forEach(el => ro.observe(el));
+    (function () { const c = document.getElementById('bg-canvas'); if (!c || matchMedia('(prefers-reduced-motion: reduce)').matches) return; const x = c.getContext('2d'); let w, h, d = []; const g = 42; let mx = -9999, my = -9999; function rs() { w = c.width = innerWidth; h = c.height = innerHeight; d = []; for (let i = g / 2; i < w; i += g)for (let j = g / 2; j < h; j += g)d.push({ ox: i, oy: j }); } rs(); addEventListener('resize', rs); addEventListener('mousemove', e => { mx = e.clientX; my = e.clientY; }); (function dr() { x.clearRect(0, 0, w, h); const col = getComputedStyle(rt).getPropertyValue('--accent').trim() || '#5FCE8F'; for (const p of d) { const dx = mx - p.ox, dy = my - p.oy, ds = Math.sqrt(dx * dx + dy * dy); let px = p.ox, py = p.oy, a = .1, s = 1.3; if (ds < 140) { const f = 1 - ds / 140; px = p.ox - dx * f * .25; py = p.oy - dy * f * .25; a = .1 + f * .55; s = 1.3 + f * 1.8; } x.beginPath(); x.arc(px, py, s, 0, 7); x.fillStyle = col; x.globalAlpha = a; x.fill(); } x.globalAlpha = 1; requestAnimationFrame(dr); })(); })();
+    if (!matchMedia('(hover: none)').matches) { const dot = document.querySelector('.cursor-dot'), ring = document.querySelector('.cursor-ring'); let mx = 0, my = 0, rx = 0, ry = 0; addEventListener('mousemove', e => { mx = e.clientX; my = e.clientY; dot.style.left = mx + 'px'; dot.style.top = my + 'px'; }); (function l() { rx += (mx - rx) * .18; ry += (my - ry) * .18; ring.style.left = rx + 'px'; ring.style.top = ry + 'px'; requestAnimationFrame(l); })(); }</script>
+</body>
+
+</html>

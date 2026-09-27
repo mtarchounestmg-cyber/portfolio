@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>TaskFlow — Guide d'utilisation</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+    <nav class="demo-topbar"><span class="logo">✅ Task<span>Flow</span></span>
+        <a class="tf-link" href="index.html">Accueil</a><a class="tf-link" href="app.html">Application</a><a
+            class="tf-link active" href="guide.html">Guide</a>
+        <span class="spacer"></span><a class="back" href="../etude-taskflow.html">📄 Étude de cas</a><a class="back"
+            href="../index.html">← Portfolio</a>
+    </nav>
+    <div class="docs">
+        <h1>📖 Guide d'utilisation</h1>
+        <p class="sub">Prenez TaskFlow en main en 5 minutes. Tout est expliqué, étape par étape.</p>
+        <div class="step"><b>Étape 1 — Connectez-vous.</b> Ouvrez l'<a href="app.html">application</a> et saisissez
+            n'importe quel email (ex : <kbd>demo@test.fr</kbd>). Chaque email a son propre espace de tâches, sauvegardé
+            automatiquement dans le navigateur.</div>
+        <div class="step"><b>Étape 2 — Créez votre première tâche.</b> Cliquez sur <kbd>+ Nouvelle</kbd>, donnez un
+            titre, choisissez une catégorie (Travail / Perso / Urgent), une priorité et une échéance. Cliquez sur
+            <kbd>Enregistrer</kbd>.</div>
+        <div class="step"><b>Étape 3 — Organisez avec les vues.</b> La barre latérale propose des vues intelligentes :
+            <b>Toutes</b>, <b>Aujourd'hui</b> (échéance = jour J), <b>Urgentes</b> (priorité haute), <b>Terminées</b>,
+            plus un filtre par catégorie.</div>
+        <div class="step"><b>Étape 4 — Recherchez instantanément.</b> Tapez dans la barre 🔍 : la liste se filtre
+            pendant la frappe, sans recharger la page.</div>
+        <div class="step"><b>Étape 5 — Terminez & suivez.</b> Cliquez le cercle pour terminer une tâche. Les compteurs
+            (Total, En cours, En retard) se mettent à jour en temps réel. Les tâches dépassées affichent <b
+                style="color:#DC2626">EN RETARD</b>.</div>
+        <h2 style="margin:30px 0 10px;font-size:22px;">❓ Questions fréquentes</h2>
+        <details class="faq" open>
+            <summary>Mes données sont-elles conservées ?</summary>
+            <p style="margin-top:8px;color:#6B7280">Oui. Dans cette démo, elles sont stockées dans le
+                <b>localStorage</b> de votre navigateur (clé par email). Dans la version réelle PHP/MySQL, elles sont en
+                base de données, accessibles depuis n'importe quel appareil.</p>
+        </details>
+        <details class="faq">
+            <summary>Comment fonctionnent les rappels email ?</summary>
+            <p style="margin-top:8px;color:#6B7280">Côté production, un script CRON tourne chaque matin : il sélectionne
+                les tâches à J-1 et en retard, puis envoie un récapitulatif via PHPMailer. La démo locale simule ce
+                comportement (badge EN RETARD).</p>
+        </details>
+        <details class="faq">
+            <summary>Puis-je modifier ou supprimer une tâche ?</summary>
+            <p style="margin-top:8px;color:#6B7280">Oui : boutons ✏️ (modifier) et 🗑️ (supprimer, avec confirmation)
+                sur chaque carte.</p>
+        </details>
+        <details class="faq">
+            <summary>Et la version technique ?</summary>
+            <p style="margin-top:8px;color:#6B7280">Lisez l'<a href="../etude-taskflow.html" style="color:#16A34A">étude
+                    de cas complète</a> : schéma SQL, code PHP/PDO, architecture MVC et logique des rappels.</p>
+        </details>
+        <h2 style="margin:30px 0 10px;font-size:22px;">⌨️ Raccourcis</h2>
+        <pre class="code">+ Nouvelle tâche  →  bouton « + Nouvelle » (en haut à droite)
+Recherche         →  champ 🔍 (filtrage instantané)
+Terminer          →  clic sur le cercle
+Filtrer           →  barre latérale (vues + catégories)</pre>
+        <div style="text-align:center;margin-top:28px"><a class="btn" href="app.html">Ouvrir l'application →</a></div>
+    </div>
+    <footer class="site">TaskFlow — démo fictive réalisée par <a href="../index.html">Tarchoune Mohamed</a> · <a
+            href="../etude-taskflow.html">Lire l'étude de cas</a></footer>
+</body>
+
+</html>

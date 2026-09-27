@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>La Carte — Le Saveur</title>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Playfair+Display:wght@600;700&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+    <div class="demo-mini"><span>💡 Site de démonstration fictif</span><a href="../etude-saveur.html">📄 Étude de
+            cas</a><a href="../index.html">← Portfolio</a></div>
+    <nav class="nav">
+        <div class="nav-in"><a class="brand" href="index.html">Le Saveur<small>PARIS · DEPUIS 1998</small></a>
+            <div class="nav-links"><a href="index.html">Accueil</a><a class="active" href="menu.html">La Carte</a><a
+                    href="reservations.html">Réserver</a><a href="contact.html">Contact</a></div>
+        </div>
+    </nav>
+    <div class="wrap">
+        <h2>🍽️ La Carte</h2>
+        <p class="sub">Fait maison, produits du marché. Filtrez par envie.</p>
+        <div class="filters"><button class="active" onclick="setCat('all',this)">Tout</button><button
+                onclick="setCat('entree',this)">Entrées</button><button
+                onclick="setCat('plat',this)">Plats</button><button
+                onclick="setCat('dessert',this)">Desserts</button><button
+                onclick="setCat('boisson',this)">Boissons</button><button onclick="toggleVeg(this)">🌱 Veggie
+                only</button></div>
+        <div class="searchbar"><input id="q" placeholder="🔍 Rechercher un plat… (ex : canard)" oninput="render()">
+        </div>
+        <div id="menu"></div>
+        <div class="cta-band">
+            <h2 style="color:#fff">L'eau à la bouche ?</h2>
+            <p>Il reste des tables ce soir — réservez en 1 minute.</p><a class="btn btn-gold"
+                href="reservations.html">📅 Réserver →</a>
+        </div>
+    </div>
+    <footer class="site">© 2026 Le Saveur — site de démonstration fictif par <a href="../index.html">Tarchoune
+            Mohamed</a> · <a href="../etude-saveur.html">Étude de cas</a></footer>
+    <script>
+        const DISHES = [
+            { e: "🥗", n: "Salade chèvre chaud", d: "Mesclun, chèvre rôti au miel, noix, vinaigrette balsamique.", p: 12, cat: "entree", veg: 1 },
+            { e: "🧅", n: "Soupe à l'oignon gratinée", d: "Oignons confits, bouillon maison, comté gratiné.", p: 9, cat: "entree", veg: 1 },
+            { e: "🦆", n: "Foie gras mi-cuit", d: "Toast brioché, chutney de figues, fleur de sel.", p: 16, cat: "entree", chef: 1 },
+            { e: "🐌", n: "Escargots de Bourgogne (x6)", d: "Beurre persillé à l'ail, pain grillé.", p: 13, cat: "entree" },
+            { e: "🦆", n: "Confit de canard maison", d: "Cuisse confite 7 h, pommes sarladaises, jus corsé.", p: 24, cat: "plat", chef: 1 },
+            { e: "🐟", n: "Bar rôti, beurre blanc", d: "Pêche du jour, légumes glacés, citron.", p: 28, cat: "plat" },
+            { e: "🥩", n: "Bavette à l'échalote", d: "Bavette charolaise, sauce échalote, frites maison.", p: 22, cat: "plat" },
+            { e: "🍝", n: "Risotto aux cèpes", d: "Riz carnaroli crémeux, cèpes, parmesan 24 mois.", p: 21, cat: "plat", veg: 1 },
+            { e: "🌶️", n: "Poulet tikka maison", d: "Émincé mariné, riz basmati, sauce relevée.", p: 19, cat: "plat", spicy: 1 },
+            { e: "🍫", n: "Fondant au chocolat", d: "Cœur coulant 70 %, glace vanille Bourbon.", p: 11, cat: "dessert", veg: 1, chef: 1 },
+            { e: "🍮", n: "Crème brûlée vanille", d: "Vanille de Madagascar, tuile aux amandes.", p: 9, cat: "dessert", veg: 1 },
+            { e: "🧀", n: "Assiette de fromages", d: "Sélection affineur : comté, roquefort, chèvre.", p: 13, cat: "dessert", veg: 1 },
+            { e: "🍷", n: "Bordeaux AOC (75cl)", d: "Château Les Pins 2019 — notre sélection.", p: 32, cat: "boisson", veg: 1 },
+            { e: "🍺", n: "Bière artisanale (33cl)", d: "IPA ou blonde, brassée à Paris.", p: 7, cat: "boisson", veg: 1 },
+            { e: "🥤", n: "Citronnade maison", d: "Citron, menthe, gingembre. Aussi en carafe.", p: 5, cat: "boisson", veg: 1 }];
+        let cat = 'all', vegOnly = false;
+        const CATS = { entree: "🥗 Entrées", plat: "🍖 Plats", dessert: "🍰 Desserts", boisson: "🍷 Boissons" };
+        function setCat(c, b) { cat = c; document.querySelectorAll('.filters button').forEach(x => { if (!x.textContent.includes('Veggie')) x.classList.remove('active') }); b.classList.add('active'); render() }
+        function toggleVeg(b) { vegOnly = !vegOnly; b.classList.toggle('active'); render() }
+        function render() {
+            const q = (document.getElementById('q').value || '').toLowerCase();
+            let list = DISHES.filter(d => (cat === 'all' || d.cat === cat) && (!vegOnly || d.veg) && (!q || d.n.toLowerCase().includes(q) || d.d.toLowerCase().includes(q)));
+            let html = '', last = '';
+            list.forEach(d => {
+                if (d.cat !== last) { last = d.cat; html += `<div class="menu-cat">${CATS[last]}</div>` }
+                html += `<div class="dish"><div class="e">${d.e}</div><div><b>${d.n}${d.veg ? '<span class="tag veg">VEGGIE</span>' : ''}${d.spicy ? '<span class="tag spicy">ÉPICÉ</span>' : ''}${d.chef ? '<span class="tag chef">CHEF</span>' : ''}</b><small>${d.d}</small></div><div class="p">${d.p} €</div></div>`
+            });
+            document.getElementById('menu').innerHTML = html || '<p style="text-align:center;color:#8a7a6a;padding:30px">Aucun plat trouvé. Essayez « canard » 🙂</p>'
+        }
+        render();
+    </script>
+</body>
+
+</html>

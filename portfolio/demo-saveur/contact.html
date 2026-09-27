@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>Contact — Le Saveur</title>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Playfair+Display:wght@600;700&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+    <div class="demo-mini"><span>💡 Site de démonstration fictif</span><a href="../etude-saveur.html">📄 Étude de
+            cas</a><a href="../index.html">← Portfolio</a></div>
+    <nav class="nav">
+        <div class="nav-in"><a class="brand" href="index.html">Le Saveur<small>PARIS · DEPUIS 1998</small></a>
+            <div class="nav-links"><a href="index.html">Accueil</a><a href="menu.html">La Carte</a><a
+                    href="reservations.html">Réserver</a><a class="active" href="contact.html">Contact</a></div>
+        </div>
+    </nav>
+    <div class="wrap">
+        <h2>📍 Nous trouver & nous écrire</h2>
+        <p class="sub">À deux pas de la Bastille — réponse sous 24 h.</p>
+        <div class="contact-grid">
+            <div class="form-card">
+                <h3 class="serif" style="font-size:20px">Informations</h3>
+                <p style="font-size:14.5px;margin-top:10px">📍 <b>24 rue des Lilas, 75011 Paris</b><br>🚇 Bastille
+                    (lignes 1, 5, 8) — sortie 3<br>📞 <b>01 43 55 12 12</b><br>✉️ bonjour@le-saveur.fr</p>
+                <p style="font-size:14.5px;margin-top:10px">🕐 <b>Mar – Sam :</b> 12h-14h30 /
+                    19h-23h<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<b>Dim :</b> 12h-15h · <b>Lun :</b> fermé</p>
+                <iframe class="map" title="Carte"
+                    src="https://www.openstreetmap.org/export/embed.html?bbox=2.362%2C48.850%2C2.382%2C48.858&layer=mapnik&marker=48.854%2C2.372"></iframe>
+                <p style="font-size:12.5px;color:#8a7a6a;margin-top:8px">🗺️ Carte interactive OpenStreetMap — visible
+                    avec une connexion internet.</p>
+                <h3 class="serif" style="font-size:18px;margin-top:22px">En images</h3>
+                <div class="galerie">
+                    <div style="background:linear-gradient(135deg,#f6e7c8,#e8b96a)">🍽️</div>
+                    <div style="background:linear-gradient(135deg,#1c1512,#5f3a3a)">🍷</div>
+                    <div style="background:linear-gradient(135deg,#e8d5f2,#b48ad6)">🧁</div>
+                    <div style="background:linear-gradient(135deg,#d9ecdc,#7fae86)">🥗</div>
+                </div>
+            </div>
+            <div class="form-card">
+                <h3 class="serif" style="font-size:20px">Envoyez-nous un message</h3>
+                <label>Nom *</label><input id="c-nom" placeholder="Votre nom">
+                <label>Email *</label><input id="c-mail" type="email" placeholder="vous@exemple.fr">
+                <label>Sujet</label><select id="c-sujet">
+                    <option>Question générale</option>
+                    <option>Groupe / privatisation</option>
+                    <option>Allergies / régimes</option>
+                    <option>Presse / partenariat</option>
+                    <option>Recrutement</option>
+                </select>
+                <label>Message *</label><textarea id="c-msg" rows="5" placeholder="Bonjour, je souhaite…"></textarea>
+                <button class="btn" style="width:100%;margin-top:16px" onclick="send()">Envoyer ✉️</button>
+                <div class="success" id="ok">✅ <b>Message envoyé !</b><br>Nous vous répondons sous 24 h ouvrées.</div>
+            </div>
+        </div>
+    </div>
+    <footer class="site">© 2026 Le Saveur — site de démonstration fictif par <a href="../index.html">Tarchoune
+            Mohamed</a> · <a href="../etude-saveur.html">Étude de cas</a></footer>
+    <div id="toast"></div>
+    <script>
+        const store = { m: {}, getItem(k) { try { return localStorage.getItem(k) } catch (e) { return (k in this.m) ? this.m[k] : null } }, setItem(k, v) { try { localStorage.setItem(k, v) } catch (e) { this.m[k] = String(v) } }, removeItem(k) { try { localStorage.removeItem(k) } catch (e) { delete this.m[k] } } };
+        function toast(m) { const t = document.getElementById('toast'); t.textContent = m; t.style.display = 'block'; setTimeout(() => t.style.display = 'none', 2600) }
+        function send() {
+            const n = document.getElementById('c-nom').value.trim(), m = document.getElementById('c-mail').value.trim(), msg = document.getElementById('c-msg').value.trim();
+            if (!n) return toast('Indiquez votre nom'); if (!m.includes('@')) return toast('Email invalide'); if (msg.length < 5) return toast('Message trop court');
+            const all = JSON.parse(store.getItem('saveur_msg') || '[]'); all.unshift({ n, m, s: document.getElementById('c-sujet').value, msg, at: new Date().toISOString() }); store.setItem('saveur_msg', JSON.stringify(all));
+            document.getElementById('ok').style.display = 'block'; document.getElementById('c-nom').value = ''; document.getElementById('c-mail').value = ''; document.getElementById('c-msg').value = ''; toast('Message envoyé ✅')
+        }
+    </script>
+</body>
+
+</html>

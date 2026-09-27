@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>Insight — Vue d'ensemble</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+    <div class="mobnav"><a class="active" href="index.html">🏠 Accueil</a><a href="rapports.html">📈 Rapports</a><a
+            href="import.html">📤 Import</a><a href="../etude-insight.html">📄 Étude</a></div>
+    <aside class="side">
+        <div class="logo">📊 In<span>sight</span></div><small class="tag">Dashboard analytics · démo</small>
+        <a class="nav active" href="index.html">🏠 Vue d'ensemble</a><a class="nav" href="rapports.html">📈
+            Rapports</a><a class="nav" href="import.html">📤 Import CSV</a>
+        <div class="tip">💡 <b style="color:#fff">Astuce</b> — importez votre CSV sur la page <a href="import.html"
+                style="color:#4ADE80">Import</a> : tout le dashboard se met à jour.</div>
+        <div class="back"><a href="../etude-insight.html">📄 Étude de cas</a><a href="../index.html">← Portfolio</a>
+        </div>
+    </aside>
+    <main class="main">
+        <div class="top">
+            <div>
+                <h1>Vue d'ensemble</h1><small id="periode">—</small>
+            </div>
+            <div><a class="btn btn-ghost" href="import.html">📤 Import CSV</a> <button class="btn"
+                    onclick="loadSample()">↺ Exemple</button></div>
+        </div>
+        <div class="drop" onclick="document.getElementById('file').click()">📁 Glissez votre CSV ici ou cliquez pour
+            parcourir<br><small>Format : date,ventes,visiteurs (ex: 2025-01-01,120,300)</small></div>
+        <input type="file" id="file" accept=".csv" style="display:none" onchange="importCSV(this)">
+        <div class="kpis">
+            <div class="kpi"><small>Chiffre d'affaires</small><b id="k-ca">0 €</b><span class="up">▲ +18.2% vs mois
+                    dernier</span></div>
+            <div class="kpi"><small>Commandes</small><b id="k-cmd">0</b><span class="up">▲ +12.4%</span></div>
+            <div class="kpi"><small>Visiteurs</small><b id="k-vis">0</b><span class="up">▲ +24.1%</span></div>
+            <div class="kpi"><small>Taux de conversion</small><b id="k-conv">0%</b><span class="down">▼ -0.8%</span>
+            </div>
+        </div>
+        <div class="grid2">
+            <div class="card">
+                <h3>Évolution des ventes</h3><canvas id="c1" height="140"></canvas>
+            </div>
+            <div class="card">
+                <h3>Canaux d'acquisition</h3><canvas id="c2" height="140"></canvas>
+            </div>
+        </div>
+        <div class="grid2">
+            <div class="card">
+                <h3>Trafic visiteurs</h3><canvas id="c3" height="140"></canvas>
+            </div>
+            <div class="card">
+                <h3>Top périodes</h3>
+                <div id="tops"></div>
+            </div>
+        </div>
+        <div class="card">
+            <h3>Commandes récentes</h3>
+            <div style="overflow:auto">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Commande</th>
+                            <th>Client</th>
+                            <th>Montant</th>
+                            <th>Statut</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tbody"></tbody>
+                </table>
+            </div>
+        </div>
+    </main>
+    <script>
+        const store = { m: {}, getItem(k) { try { return localStorage.getItem(k) } catch (e) { return (k in this.m) ? this.m[k] : null } }, setItem(k, v) { try { localStorage.setItem(k, v) } catch (e) { this.m[k] = String(v) } }, removeItem(k) { try { localStorage.removeItem(k) } catch (e) { delete this.m[k] } } };
+        let charts = [];
+        const SAMPLE = { labels: ['Jan', 'Fév', 'Mar', 'Avr', 'Mai'], ventes: [4200, 5800, 5100, 7800, 9200], visiteurs: [8200, 10500, 9800, 14200, 16800] };
+        function getData() { try { const d = JSON.parse(store.getItem('insight_data')); if (d && d.labels && d.labels.length) return d } catch (e) { } return SAMPLE }
+        function setData(d) { store.setItem('insight_data', JSON.stringify(d)) }
+        function loadSample() { setData(SAMPLE); const d = getData(); update(d.labels, d.ventes, d.visiteurs) }
+        function update(labels, ventes, visiteurs) {
+            const ca = ventes.reduce((a, b) => a + b, 0), cmd = Math.round(ca / 85), vis = visiteurs.reduce((a, b) => a + b, 0);
+            document.getElementById('k-ca').textContent = ca.toLocaleString('fr-FR') + ' €'; document.getElementById('k-cmd').textContent = cmd.toLocaleString('fr-FR'); document.getElementById('k-vis').textContent = vis.toLocaleString('fr-FR'); document.getElementById('k-conv').textContent = (vis ? (cmd / vis * 100) : 0).toFixed(1) + '%';
+            document.getElementById('periode').textContent = 'Données : ' + labels[0] + ' — ' + labels[labels.length - 1] + ' · ' + labels.length + ' périodes · temps réel';
+            charts.forEach(c => c.destroy()); charts = [];
+            if (window.Chart) {
+                Chart.defaults.color = '#8A93A3'; Chart.defaults.borderColor = '#1F2937';
+                charts.push(new Chart(document.getElementById('c1'), { type: 'bar', data: { labels, datasets: [{ data: ventes, backgroundColor: '#4ADE80', borderRadius: 8 }] }, options: { plugins: { legend: { display: false } } } }));
+                charts.push(new Chart(document.getElementById('c2'), { type: 'doughnut', data: { labels: ['Organique', 'Ads', 'Réseaux', 'Direct'], datasets: [{ data: [38, 27, 22, 13], backgroundColor: ['#4ADE80', '#60A5FA', '#E5B567', '#8B5CF6'], borderWidth: 0 }] }, options: { plugins: { legend: { position: 'bottom', labels: { boxWidth: 12 } } } } }));
+                charts.push(new Chart(document.getElementById('c3'), { type: 'line', data: { labels, datasets: [{ data: visiteurs, borderColor: '#60A5FA', backgroundColor: 'rgba(96,165,250,.15)', fill: true, tension: .4 }] }, options: { plugins: { legend: { display: false } } } }));
+            } else { document.querySelectorAll('canvas').forEach(c => { const p = document.createElement('p'); p.style.cssText = 'color:#6B7280;font-size:13px;padding:20px;text-align:center'; p.textContent = 'Graphiques indisponibles hors-ligne (CDN bloque). Les KPIs et tableaux restent a jour.'; c.replaceWith(p) }); }
+            const max = Math.max(...ventes);
+            document.getElementById('tops').innerHTML = labels.map((l, i) => `<div class="bar-row"><div class="lbl"><span>${l}</span><b>${ventes[i].toLocaleString()} €</b></div><div class="bar-track"><div class="bar-fill" style="width:${ventes[i] / max * 100}%"></div></div></div>`).join('');
+            const names = ['Sophie Martin', 'Karim Benali', 'Julie Dubois', 'Thomas Leroy', 'Emma Petit', 'Lucas Moreau'];
+            document.getElementById('tbody').innerHTML = names.map((n, i) => { const m = Math.round(40 + Math.random() * 400), s = i % 3 === 1 ? ['En préparation', 'wait'] : ['Livrée', 'ok']; return `<tr><td style="font-family:monospace">#CMD-${2480 + i}</td><td>${n}</td><td><b>${m} €</b></td><td><span class="st ${s[1]}">${s[0]}</span></td></tr>` }).join('')
+        }
+        function importCSV(input) { const f = input.files[0]; if (!f) return; const r = new FileReader(); r.onload = () => { try { const lines = r.result.trim().split('\n').slice(1); const L = [], V = [], VI = []; lines.forEach(l => { const [d, v, vi] = l.split(/[;,]/); if (d) { L.push(d.trim().slice(5) || d.trim()); V.push(parseFloat(v) || 0); VI.push(parseFloat(vi) || 0) } }); if (!L.length) throw 0; setData({ labels: L, ventes: V, visiteurs: VI }); logHist(f.name, L.length); update(L, V, VI) } catch (e) { alert('CSV invalide. Format attendu : date,ventes,visiteurs') } }; r.readAsText(f); input.value = '' }
+        function logHist(name, n) { const h = JSON.parse(store.getItem('insight_hist') || '[]'); h.unshift({ name, n, at: new Date().toLocaleString('fr-FR') }); store.setItem('insight_hist', JSON.stringify(h.slice(0, 10))) }
+        const d0 = getData(); update(d0.labels, d0.ventes, d0.visiteurs);
+    </script>
+</body>
+
+</html>
